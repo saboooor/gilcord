@@ -21,9 +21,9 @@ discord.type = { color: '\u001b[34m', name: 'discord' };
 discord.startTimestamp = Date.now();
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(discord);
 
-const { guilded: { token } } = require('./config.json');
+const { guiltoken } = require('./config.json');
 const G = require('guilded.js');
-const guilded = new G.Client({ token: token });
+const guilded = new G.Client({ token: guiltoken });
 guilded.type = { color: '\u001b[33m', name: 'guilded' };
 guilded.startTimestamp = Date.now();
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(guilded);

@@ -1,5 +1,5 @@
-const { discord: { token } } = require('../config.json');
+const { disctoken } = require('../config.json');
 module.exports = async client => {
-	await client.login(token);
+	await client.login(disctoken);
 	client.logger.info('Bot logged in');
 };
