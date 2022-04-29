@@ -12,9 +12,10 @@ module.exports = async (discord, guilded) => {
 			const guildedId = servers[srvId].bridges[channelName].g;
 			const discordId = servers[srvId].bridges[channelName].d;
 			discord.on('messageCreate', async message => {
-				if (message.channel.id != discordId || message.author.id == discord.user.id) return;
-				if (channelName == 'global' && message.member.user.bot && (message.embeds || message.content)) guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds });
-				else guilded.messages.send(guildedId, { content: `**${message.member.user.tag}** ► ${message.content}`, embeds: message.embeds });
+				if (message.channel.id != discordId || message.author.id == discord.user.id || message.webhookId == servers[srvId].webhookid) return;
+				if (channelName == 'global' && message.author.bot && (message.embeds || message.content)) guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds });
+				else guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
+				discord.logger.info(`Message sent to ${guildedId} from ${discordId} (${channelName} bridge)`);
 			});
 			guilded.on('messageCreated', async message => {
 				if (message.channelId != guildedId || message.createdById == guilded.user.id || (!message.content && !message.embeds)) return;
@@ -26,6 +27,7 @@ module.exports = async (discord, guilded) => {
 					username: `Guilded • ${message.member.user.name}`,
 					avatarURL: message.member.user.avatar,
 				});
+				discord.logger.info(`Message sent to ${discordId} from ${guildedId} (${channelName} bridge)`);
 			});
 			discord.logger.info(`Loaded #${channelName} bridge`);
 		});
