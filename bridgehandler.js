@@ -1,3 +1,4 @@
+function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { servers } = require('./config.json');
 const D = require('discord.js');
 module.exports = async (discord, guilded) => {
@@ -13,21 +14,42 @@ module.exports = async (discord, guilded) => {
 			const discordId = servers[srvId].bridges[channelName].d;
 			discord.on('messageCreate', async message => {
 				if (message.channel.id != discordId || message.author.id == discord.user.id || message.webhookId == servers[srvId].webhookid) return;
-				if (channelName == 'global' && message.author.bot && (message.embeds || message.content)) guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds });
-				else guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
-				discord.logger.info(`Message sent to ${guildedId} from ${discordId} (${channelName} bridge)`);
+				let guildedmsg = null;
+				guildedmsg = (channelName == 'global' && message.author.bot && (message.embeds || message.content)) ?
+					await guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds }) :
+					await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
+				// You may replace the above 3 lines with:
+				// guildedmsg = await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
+				// I just have it this way for my own personal use, i don't think it'll affect anyone much
+				const updatefunc = async (oldmsg, newmsg) => {
+					if (newmsg.id != message.id) return;
+					guildedmsg.edit({ content: `**${newmsg.author.tag}** ► ${newmsg.content}`, embeds: newmsg.embeds });
+				};
+				discord.on('messageUpdate', updatefunc);
+				await sleep(15000);
+				discord.removeListener('messageUpdate', updatefunc);
 			});
 			guilded.on('messageCreated', async message => {
 				if (message.channelId != guildedId || message.createdById == guilded.user.id || (!message.content && !message.embeds)) return;
 				message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
 				if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById);
 				await discwh.edit({ channel: discordId });
-				await discwhclient.send({
+				const discordmsg = await discwhclient.send({
 					content: message.content,
 					username: `Guilded • ${message.member.user.name}`,
 					avatarURL: message.member.user.avatar,
+					embeds: message.embeds,
 				});
-				discord.logger.info(`Message sent to ${discordId} from ${guildedId} (${channelName} bridge)`);
+				const updatefunc = async newmsg => {
+					if (newmsg.id != message.id) return;
+					discwh.editMessage(discordmsg.id, {
+						content: newmsg.content,
+						embeds: newmsg.embeds,
+					});
+				};
+				guilded.on('messageUpdated', updatefunc);
+				await sleep(15000);
+				discord.removeListener('messageUpdate', updatefunc);
 			});
 			discord.logger.info(`Loaded #${channelName} bridge`);
 		});
