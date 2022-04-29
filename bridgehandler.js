@@ -12,16 +12,14 @@ module.exports = async (discord, guilded) => {
 			const guildedId = servers[srvId].bridges[channelName].g;
 			const discordId = servers[srvId].bridges[channelName].d;
 			discord.on('messageCreate', async message => {
-				if (message.channel.id != discordId) return;
-				if (message.author.id == discord.user.id) return;
+				if (message.channel.id != discordId || message.author.id == discord.user.id) return;
 				if (channelName == 'global' && message.member.user.bot && (message.embeds || message.content)) guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds });
 				else guilded.messages.send(guildedId, { content: `**${message.member.user.tag}** ► ${message.content}`, embeds: message.embeds });
 			});
 			guilded.on('messageCreated', async message => {
-				if (message.channelId != guildedId) return;
-				if (message.createdById == guilded.user.id) return;
+				if (message.channelId != guildedId || message.createdById == guilded.user.id || (!message.content && !message.embeds)) return;
 				message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
-				if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById).catch(err => guilded.logger.warn(err.stack));
+				if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById);
 				await discwh.edit({ channel: discordId });
 				await discwhclient.send({
 					content: message.content,
