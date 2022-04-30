@@ -30,7 +30,7 @@ module.exports = async (discord, guilded) => {
 				discord.removeListener('messageUpdate', updatefunc);
 			});
 			guilded.on('messageCreated', async message => {
-				if (message.channelId != guildedId || message.createdById == guilded.user.id || (!message.content && !message.embeds)) return;
+				if (message.channelId != guildedId || message.createdById == guilded.user.id || (!message.content && !message.raw.embeds)) return;
 				message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
 				if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById);
 				await discwh.edit({ channel: discordId });
@@ -38,7 +38,7 @@ module.exports = async (discord, guilded) => {
 					content: message.content,
 					username: `Guilded • ${message.member.user.name}`,
 					avatarURL: message.member.user.avatar,
-					embeds: message.embeds,
+					embeds: message.raw.embeds,
 				});
 				const updatefunc = async newmsg => {
 					if (newmsg.id != message.id) return;
