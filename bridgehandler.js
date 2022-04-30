@@ -1,13 +1,13 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { servers } = require('./config.json');
 const D = require('discord.js');
+const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
 module.exports = async (discord, guilded) => {
 	const srvs = Object.keys(servers);
 	srvs.forEach(async srvId => {
 		const discserver = await discord.guilds.fetch(srvId);
 		const discwh = (await discserver.fetchWebhooks()).get(servers[srvId].webhookid);
 		const discwhclient = new D.WebhookClient({ id: servers[srvId].webhookid, token: discwh.token });
-
 		const bridges = Object.keys(servers[srvId].bridges);
 		bridges.forEach(async channelName => {
 			const guildedId = servers[srvId].bridges[channelName].g;
@@ -15,6 +15,21 @@ module.exports = async (discord, guilded) => {
 			discord.on('messageCreate', async message => {
 				if (message.channel.id != discordId || message.author.id == discord.user.id || message.webhookId == servers[srvId].webhookid) return;
 				let guildedmsg = null;
+				const channelMatches = [...message.content.matchAll(ChannelsPattern)];
+				channelMatches.forEach(match => {
+					const channel = discord.channels.cache.get(match[1]);
+					message.content = message.content.replace(match[0], `#${channel.name}`);
+				});
+				const roleMatches = [...message.content.matchAll(RolesPattern)];
+				roleMatches.forEach(match => {
+					const role = discserver.roles.cache.get(match[1]);
+					message.content = message.content.replace(match[0], `@${role.name}`);
+				});
+				const userMatches = [...message.content.matchAll(UsersPattern)];
+				userMatches.forEach(match => {
+					const user = discord.users.cache.get(match[1]);
+					message.content = message.content.replace(match[0], `@${user.tag}`);
+				});
 				guildedmsg = (channelName == 'global' && message.author.bot && (message.embeds || message.content)) ?
 					await guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds }) :
 					await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
