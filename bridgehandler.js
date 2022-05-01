@@ -32,7 +32,7 @@ module.exports = async (discord, guilded) => {
 				});
 				guildedmsg = (channelName == 'global' && message.author.bot && (message.embeds || message.content)) ?
 					await guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds[0] ? message.embeds : undefined }) :
-					await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
+					await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds [0] ? message.embeds : undefined });
 				// You may replace the above 3 lines with:
 				// guildedmsg = await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
 				// I just have it this way for my own personal use, i don't think it'll affect anyone much
