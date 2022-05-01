@@ -31,7 +31,7 @@ module.exports = async (discord, guilded) => {
 					message.content = message.content.replace(match[0], `@${user.tag}`);
 				});
 				guildedmsg = (channelName == 'global' && message.author.bot && (message.embeds || message.content)) ?
-					await guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds }) :
+					await guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds[0] ? message.embeds : undefined }) :
 					await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
 				// You may replace the above 3 lines with:
 				// guildedmsg = await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
