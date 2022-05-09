@@ -28,4 +28,4 @@ guilded.type = { color: '\u001b[33m', name: 'guilded' };
 guilded.startTimestamp = Date.now();
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(guilded);
 
-require('./bridgehandler.js')(discord, guilded);
+require('./bridge/load.js')(discord, guilded);
