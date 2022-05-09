@@ -14,7 +14,6 @@ module.exports = async (discord, guilded) => {
 			const discordId = servers[srvId].bridges[channelName].d;
 			discord.on('messageCreate', async message => {
 				if (message.channel.id != discordId || message.author.id == discord.user.id || message.webhookId == servers[srvId].webhookid) return;
-				let guildedmsg = null;
 				const channelMatches = [...message.content.matchAll(ChannelsPattern)];
 				channelMatches.forEach(match => {
 					const channel = discord.channels.cache.get(match[1]);
@@ -30,19 +29,12 @@ module.exports = async (discord, guilded) => {
 					const user = discord.users.cache.get(match[1]);
 					message.content = message.content.replace(match[0], `@${user.tag}`);
 				});
-				guildedmsg = (channelName == 'global' && message.author.bot && (message.embeds || message.content)) ?
+				(channelName == 'global' && message.author.bot && (message.embeds || message.content)) ?
 					await guilded.messages.send(guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds[0] ? message.embeds : undefined }) :
 					await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds [0] ? message.embeds : undefined });
 				// You may replace the above 3 lines with:
-				// guildedmsg = await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
+				// await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
 				// I just have it this way for my own personal use, i don't think it'll affect anyone much
-				const updatefunc = async (oldmsg, newmsg) => {
-					if (newmsg.id != message.id) return;
-					guildedmsg.edit({ content: `**${newmsg.author.tag}** ► ${newmsg.content}`, embeds: newmsg.embeds });
-				};
-				discord.on('messageUpdate', updatefunc);
-				await sleep(15000);
-				discord.removeListener('messageUpdate', updatefunc);
 			});
 			guilded.on('messageCreated', async message => {
 				if (message.channelId != guildedId || message.createdById == guilded.user.id || (!message.content && !message.raw.embeds)) return;
