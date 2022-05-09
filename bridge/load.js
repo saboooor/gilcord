@@ -23,18 +23,18 @@ module.exports = async (discord, guilded) => {
 		});
 		discord.logger.info(`Loaded ${discserver.name}'s bridges!`);
 	});
-    loadEvents(discord);
-    loadEvents(guilded);
+    loadEvents(discord, srvs);
+    loadEvents(guilded, srvs);
 };
 
-function loadEvents(client) {
+function loadEvents(client, srvs) {
 const files = fs.readdirSync(`./bridge/events/${client.type.name}/`);
 	let count = 0;
 	files.forEach(file => {
 		if (!file.endsWith('.js')) return;
 		const event = require(`../../events/${client.type.name}/${file}`);
 		const eventName = file.split('.')[0];
-		client.on(eventName, event.bind(null, client));
+		client.on(eventName, event.bind(null, client, srvs));
 		delete require.cache[require.resolve(`../../events/${client.type.name}/${file}`)];
 		count++;
 	});
