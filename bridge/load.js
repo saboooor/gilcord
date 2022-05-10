@@ -2,41 +2,33 @@ const { servers } = require('../config.json');
 const { WebhookClient } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded) => {
-	const srvIds = Object.keys(servers);
-	const srvs = {};
-	srvIds.forEach(async srvId => {
-		const discserver = await discord.guilds.fetch(srvId);
-		const discwh = (await discserver.fetchWebhooks()).get(srvs[srvId].webhookid);
-		srvs[srvId] = {
-			discord: {
-				webhook: discwh,
-				client: new WebhookClient({ id: srvs[srvId].webhookid, token: discwh.token }),
-			},
+	// Load webhook clients and inject them into the servers object
+	Object.keys(servers).forEach(async srvName => {
+		const srv = servers[srvName];
+		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
+		if (!discserver) return discord.logger.error(`${srvName} Discord server doesn't exist!`);
+		const webhook = (await discserver.fetchWebhooks()).get(srv.discord.webhookId);
+		if (!webhook) return discord.logger.error(`${srvName} Discord webhook doesn't exist!`);
+		const whclient = new WebhookClient({ id: webhook.id, token: webhook.token });
+		servers[srvName].discord = {
+			serverId: discserver.id,
+			webhook, whclient,
 		};
-		const bridges = Object.keys(srvs[srvId].bridges);
-		bridges.forEach(async channelName => {
-			srvs[srvId].channels[channelName] = {
-				guilded: srvs[srvId].bridges[channelName].g,
-				discord: srvs[srvId].bridges[channelName].d,
-			};
-			discord.logger.info(`Loaded #${channelName} bridge`);
-		});
-		discord.logger.info(`Loaded ${discserver.name}'s bridges!`);
+		discord.logger.info(`${srvName} webhook loaded`);
 	});
-    loadEvents(discord, srvs);
-    loadEvents(guilded, srvs);
-};
 
-function loadEvents(client, srvs) {
-const files = fs.readdirSync(`./bridge/events/${client.type.name}/`);
-	let count = 0;
-	files.forEach(file => {
-		if (!file.endsWith('.js')) return;
-		const event = require(`../../events/${client.type.name}/${file}`);
-		const eventName = file.split('.')[0];
-		client.on(eventName, event.bind(null, client, srvs));
-		delete require.cache[require.resolve(`../../events/${client.type.name}/${file}`)];
-		count++;
+	// Load events
+	[discord, guilded].forEach(client => {
+		let count = 0;
+		const files = fs.readdirSync(`./bridge/events/${client.type.name}/`);
+		files.forEach(file => {
+			if (!file.endsWith('.js')) return;
+			const event = require(`./events/${client.type.name}/${file}`);
+			const eventName = file.split('.')[0];
+			client.on(eventName, event.bind(null, discord, guilded, servers));
+			delete require.cache[require.resolve(`./events/${client.type.name}/${file}`)];
+			count++;
+		});
+		client.logger.info(`${count} event listeners loaded`);
 	});
-	client.logger.info(`${count} event listeners loaded`);
-}
+};
