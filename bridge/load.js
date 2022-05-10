@@ -3,18 +3,17 @@ const { WebhookClient } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded) => {
 	// Load webhook clients and inject them into the servers object
-	Object.keys(servers).forEach(async srvName => {
-		const srv = servers[srvName];
+	servers.forEach(async srv => {
 		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
-		if (!discserver) return discord.logger.error(`${srvName} Discord server doesn't exist!`);
+		if (!discserver) return discord.logger.error(`${srv.discord.serverId} Discord server Id doesn't exist!`);
 		const webhook = (await discserver.fetchWebhooks()).get(srv.discord.webhookId);
-		if (!webhook) return discord.logger.error(`${srvName} Discord webhook doesn't exist!`);
+		if (!webhook) return discord.logger.error(`${discserver.name} Discord webhook doesn't exist!`);
 		const whclient = new WebhookClient({ id: webhook.id, token: webhook.token });
-		servers[srvName].discord = {
+		srv.discord = {
 			serverId: discserver.id,
 			webhook, whclient,
 		};
-		discord.logger.info(`${srvName} webhook loaded`);
+		discord.logger.info(`${discserver.name} webhook loaded`);
 	});
 
 	// Load events

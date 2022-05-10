@@ -2,8 +2,8 @@
     "disctoken": "the discord bot's token goes here",
     "guiltoken": "the guilded bot's token goes here",
     "prefix": ".",
-    "servers": {
-        "server name": {
+    "servers": [
+        {
             "discord": {
                 "serverId": "discord server Id",
                 "webhookId": "the discord server's webhook id (create a webhook in the server)"
@@ -11,18 +11,18 @@
             "guilded": {
                 "serverId": "guilded server Id"
             },
-            "channels": {
-                "channel-name": {
+            "channels": [
+                {
                     "guildedId": "guilded channel id",
                     "discordId": "discord channel id"
                 },
-                "example-channel": {
+                {
                     "guildedId": "aaa28176-1144-42ca-a53f-e10e0dc38974",
                     "discordId": "865523665683611688"
                 }
-            }
+            ]
         },
-        "Example Server": {
+        {
             "discord": {
                 "serverId": "811354612547190794",
                 "webhookId": "965714920289211581"
@@ -30,16 +30,16 @@
             "guilded": {
                 "serverId": "4R547pWj"
             },
-            "channels": {
-                "channel-name": {
+            "channels": [
+                {
                     "guildedId": "guilded channel id",
                     "discordId": "discord channel id"
                 },
-                "example-channel": {
-                    "g": "aaa28176-1144-42ca-a53f-e10e0dc38974",
-                    "d": "865523665683611688"
+                {
+                    "guildedId": "aaa28176-1144-42ca-a53f-e10e0dc38974",
+                    "discordId": "865523665683611688"
                 }
-            }
+            ]
         },
     }
 }
