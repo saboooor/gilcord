@@ -4,7 +4,7 @@ module.exports = async (discord, guilded, servers, message) => {
 	if (!srv) return;
 	const bridge = srv.channels.find(b => b.discordId == message.channel.id);
 	if (!bridge) return;
-	if (message.author.id == discord.user.id || (message.webhookId && message.webhookId == srv.discwh.webhookId)) return;
+	if (message.author.id == discord.user.id || message.webhookId == srv.discwh.webhookId) return;
 	const channelMatches = [...message.content.matchAll(ChannelsPattern)];
 	channelMatches.forEach(match => {
 		const channel = discord.channels.cache.get(match[1]);
