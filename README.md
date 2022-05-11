@@ -1,9 +1,13 @@
 # a guilded-discord chat bridge
+
+Bridges chat channels between discord and guilded servers
+
 features:
 - Message editing
+- Message deleting
 - Message embeds
 - Multi-server
-- Webhooks on discord side (guilded soon if they have option to edit avatar and name)
+- Webhooks on discord side (guilded soon when avatar/name is editable)
 
 [![Discord](https://discord.com/api/guilds/811354612547190794/widget.png)](https://discord.gg/Bsefgbaedz)
 [![Guilded](https://guilded.nico.engineer/shields/vanity/cactie?style=flat)](https://guilded.gg/cactie)
