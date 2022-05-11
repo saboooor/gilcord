@@ -1,3 +1,4 @@
+function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
 module.exports = async (discord, guilded, servers, message) => {
 	const srv = servers.find(s => s.discord.serverId == message.guild.id);
@@ -29,4 +30,6 @@ module.exports = async (discord, guilded, servers, message) => {
 	if (!bridge.messages) bridge.messages = {};
 	const { id, channelId } = guildedmsg;
 	bridge.messages[message.id] = { id, channelId };
+	await sleep(120000);
+	delete bridge.messages[message.id];
 };

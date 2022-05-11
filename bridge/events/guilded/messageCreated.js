@@ -1,3 +1,4 @@
+function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 module.exports = async (discord, guilded, servers, message) => {
 	const srv = servers.find(s => s.guilded.serverId == message.serverId);
 	if (!srv) return;
@@ -16,4 +17,6 @@ module.exports = async (discord, guilded, servers, message) => {
 	});
 	if (!bridge.messages) bridge.messages = {};
 	bridge.messages[message.id] = discordmsg.id;
+	await sleep(120000);
+	delete bridge.messages[message.id];
 };
