@@ -1,26 +1,42 @@
 {
-    "disctoken": "the discord bot's token goes here",
-    "guiltoken": "the guilded bot's token goes here",
+    "discord": {
+        "token": "the discord bot's token goes here",
+        "nameformat": "this is the global format on the discord webhook names ( use {name} for the name )"
+    }
+    "guilded": {
+        "token": "the guilded bot's token goes here",
+        "nameformat": "this is the global prefix on the guilded messages ( use {name} for the name )"
+    }
     "prefix": ".",
     "servers": [
         {
             "discord": {
                 "serverId": "discord server Id",
                 "webhookId": "the discord server's webhook id (create a webhook in the server)"
-                "nameformat": "this is the format on the discord webhook name ( use {name} for the name )"
+                "nameformat": "this overrides discord global nameformat (optional)"
             },
             "guilded": {
                 "serverId": "guilded server Id"
-                "nameformat": "this is the prefix on the guilded message ( use {name} for the name )"
+                "nameformat": "this overrides guilded global nameformat (optional)"
             },
             "channels": [
                 {
-                    "guildedId": "guilded channel id",
-                    "discordId": "discord channel id"
+                    "guilded": {
+                        "id": "guilded channel id",
+                        "nameformat": "this overrides guilded server/global nameformat (optional)"
+                    }
+                    "discord": {
+                        "id": "discord channel id"
+                        "nameformat": "this overrides discord server/global nameformat (optional)"
+                    }
                 },
                 {
-                    "guildedId": "aaa28176-1144-42ca-a53f-e10e0dc38974",
-                    "discordId": "865523665683611688"
+                    "guilded": {
+                        "id": "aaa28176-1144-42ca-a53f-e10e0dc38974",
+                    }
+                    "discord": {
+                        "id": "865523665683611688"
+                    }
                 }
             ]
         },
