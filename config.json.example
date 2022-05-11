@@ -1,23 +1,23 @@
 {
-    "discord": {
-        "token": "the discord bot's token goes here",
-        "nameformat": "this is the global format on the discord webhook names ( use {name} for the name )"
-    }
     "guilded": {
         "token": "the guilded bot's token goes here",
         "nameformat": "this is the global prefix on the guilded messages ( use {name} for the name )"
     }
+    "discord": {
+        "token": "the discord bot's token goes here",
+        "nameformat": "this is the global format on the discord webhook names ( use {name} for the name )"
+    }
     "prefix": ".",
     "servers": [
         {
+            "guilded": {
+                "serverId": "guilded server Id"
+                "nameformat": "this overrides guilded global nameformat (optional)"
+            },
             "discord": {
                 "serverId": "discord server Id",
                 "webhookId": "the discord server's webhook id (create a webhook in the server)"
                 "nameformat": "this overrides discord global nameformat (optional)"
-            },
-            "guilded": {
-                "serverId": "guilded server Id"
-                "nameformat": "this overrides guilded global nameformat (optional)"
             },
             "channels": [
                 {
@@ -41,23 +41,34 @@
             ]
         },
         {
+            "guilded": {
+                "serverId": "4R547pWj"
+                "nameformat": "**{name}** ► "
+            },
             "discord": {
                 "serverId": "811354612547190794",
                 "webhookId": "965714920289211581"
                 "nameformat": "Guilded • {name}"
             },
-            "guilded": {
-                "serverId": "4R547pWj"
-                "nameformat": "**{name}** ► "
-            },
             "channels": [
                 {
-                    "guildedId": "guilded channel id",
-                    "discordId": "discord channel id"
+                    "guilded": {
+                        "id": "guilded channel id",
+                        "nameformat": "this overrides guilded server/global nameformat (optional)"
+                    }
+                    "discord": {
+                        "id": "discord channel id"
+                        "nameformat": "this overrides discord server/global nameformat (optional)"
+                    }
                 },
                 {
-                    "guildedId": "aaa28176-1144-42ca-a53f-e10e0dc38974",
-                    "discordId": "865523665683611688"
+                    "guilded": {
+                        "id": "aaa28176-1144-42ca-a53f-e10e0dc38974",
+                    }
+                    "discord": {
+                        "id": "865523665683611688"
+                        "nameformat": "{name}"
+                    }
                 }
             ]
         },
