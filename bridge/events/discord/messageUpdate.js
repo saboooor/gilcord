@@ -3,5 +3,5 @@ module.exports = async (discord, guilded, servers, newmsg) => {
 	if (!srv) return;
 	const bridge = srv.channels.find(b => b.discordId == newmsg.channel.id);
 	if (!bridge || !bridge.messages[newmsg.id]) return;
-	console.log(bridge.messages[newmsg.id]);
+	guilded.messages.edit(bridge.messages[newmsg.id], { content: `**${newmsg.author.tag}** ► ${newmsg.content}`, embeds: newmsg.embeds[0] });
 };

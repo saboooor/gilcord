@@ -3,5 +3,8 @@ module.exports = async (discord, guilded, servers, newmsg) => {
 	if (!srv) return;
 	const bridge = srv.channels.find(b => b.guildedId == newmsg.channelId);
 	if (!bridge || !bridge.messages[newmsg.id]) return;
-	console.log(bridge.messages[newmsg.id]);
+	srv.discord.webhook.editMessage(bridge.messages[newmsg.id], {
+		content: newmsg.content,
+		embeds: newmsg.embeds,
+	});
 };
