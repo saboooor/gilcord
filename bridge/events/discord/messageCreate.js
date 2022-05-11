@@ -26,5 +26,6 @@ module.exports = async (discord, guilded, servers, message) => {
 	// You may replace the above 3 lines with:
 	// const guildedmsg = await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
 	// I just have it this way for my own personal use, i don't think it'll affect anyone much
+	if (!bridge.messages) bridge.messages = {};
 	bridge.messages[message.id] = guildedmsg.id;
 };

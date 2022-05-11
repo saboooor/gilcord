@@ -14,5 +14,6 @@ module.exports = async (discord, guilded, servers, message) => {
 		avatarURL: message.member.user.avatar,
 		embeds: message.raw.embeds,
 	});
+	if (!bridge.messages) bridge.messages = {};
 	bridge.messages[message.id] = discordmsg.id;
 };
