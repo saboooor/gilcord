@@ -14,15 +14,5 @@ module.exports = async (discord, guilded, servers, message) => {
 		avatarURL: message.member.user.avatar,
 		embeds: message.raw.embeds,
 	});
-	return;
-	const updatefunc = async newmsg => {
-		if (newmsg.id != message.id) return;
-		discwh.editMessage(discordmsg.id, {
-			content: newmsg.content,
-			embeds: newmsg.embeds,
-		});
-	};
-	guilded.on('messageUpdated', updatefunc);
-	await sleep(15000);
-	discord.removeListener('messageUpdate', updatefunc);
+	bridge.messages[message.id] = discordmsg.id;
 };
