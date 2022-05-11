@@ -13,7 +13,7 @@
     "discord.js": "^14.0.0-dev.1651493371-4ba0f56",
     "eslint": "^8.14.0",
     "fs": "^0.0.1-security",
-    "guilded.js": "^0.9.0",
+    "guilded.js": "^0.10.2",
     "winston": "^3.7.2"
   }
 }
