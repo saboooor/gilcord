@@ -7,7 +7,7 @@ module.exports = async (discord, guilded, servers, message) => {
 	message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
 	if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById).catch(err => guilded.logger.error(err));
 	if (!message.member) return;
-	srv.discord.webhook.edit({ channel: bridge.discordId });
+	await srv.discord.webhook.edit({ channel: bridge.discordId });
 	const discordmsg = await srv.discord.whclient.send({
 		content: message.content,
 		username: `Guilded • ${message.member.user.name}`,
