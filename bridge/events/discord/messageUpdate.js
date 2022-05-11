@@ -3,5 +3,6 @@ module.exports = async (discord, guilded, servers, newmsg) => {
 	if (!srv) return;
 	const bridge = srv.channels.find(b => b.discordId == newmsg.channel.id);
 	if (!bridge || !bridge.messages[newmsg.id]) return;
-	guilded.messages.update(bridge.messages[newmsg.id], { content: `**${newmsg.author.tag}** ► ${newmsg.content}`, embeds: newmsg.embeds[0] });
+	const { channelId, id } = bridge.messages[newmsg.id];
+	guilded.messages.update(channelId, id, { content: `**${newmsg.author.tag}** ► ${newmsg.content}`, embeds: newmsg.embeds[0] });
 };
