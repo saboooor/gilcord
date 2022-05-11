@@ -5,5 +5,5 @@ module.exports = async (discord, guilded, servers, message) => {
 	if (!bridge || !bridge.messages[message.id]) return;
 	const { channelId, id } = bridge.messages[message.id];
 	guilded.messages.delete(channelId, id);
-	delete bridge.messages[message.id]
+	delete bridge.messages[message.id];
 };
