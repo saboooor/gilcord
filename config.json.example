@@ -7,9 +7,11 @@
             "discord": {
                 "serverId": "discord server Id",
                 "webhookId": "the discord server's webhook id (create a webhook in the server)"
+                "nameformat": "this is the format on the discord webhook name ( use {name} for the name )"
             },
             "guilded": {
                 "serverId": "guilded server Id"
+                "nameformat": "this is the prefix on the guilded message ( use {name} for the name )"
             },
             "channels": [
                 {
@@ -26,9 +28,11 @@
             "discord": {
                 "serverId": "811354612547190794",
                 "webhookId": "965714920289211581"
+                "nameformat": "Guilded • {name}"
             },
             "guilded": {
                 "serverId": "4R547pWj"
+                "nameformat": "**{name}** ► "
             },
             "channels": [
                 {

@@ -11,7 +11,7 @@ module.exports = async (discord, guilded, servers, message) => {
 	await srv.discord.webhook.edit({ channel: bridge.discordId });
 	const discordmsg = await srv.discord.whclient.send({
 		content: message.content,
-		username: `Guilded • ${message.member.user.name}`,
+		username: srv.discord.nameformat.replace(/{name}/g, message.member.user.name),
 		avatarURL: message.member.user.avatar,
 		embeds: message.raw.embeds,
 	});
