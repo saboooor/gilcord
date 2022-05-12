@@ -14,7 +14,8 @@ module.exports = async (discord, guilded, config) => {
 
 		// If the webhook doesn't exist, create it
 		if (!webhook) {
-			webhook = await discserver.createWebhook('Guilded-Discord Bridge', { reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
+			const channel = discserver.channels.cache.filter(c => c.isText()).first();
+			webhook = await channel.createWebhook('Guilded-Discord Bridge', { reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
 			if (!webhook) return discord.logger.error(`${discserver.name}'s Webhook couldn't be created!`);
 			else discord.logger.warn(`${discserver.name}'s Webhook wasn't found, so it was created.`);
 		}
