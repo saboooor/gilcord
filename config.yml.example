@@ -16,7 +16,6 @@ servers: # This is where you define the bridges
     # nameformat: "" # This is optional (overrides the default)
     discord: # This is the discord side of the server
       serverId: "" # This is the discord server's id
-      webhookId: "" # This is the discord webhook's id, it must be in the same server
     # nameformat: ""
     channels: # This is the channels to bridge
       - guilded: # This is the guilded side of the channel
@@ -38,7 +37,6 @@ servers: # This is where you define the bridges
 #   # nameformat: ""
 #   discord:
 #     serverId: ""
-#     webhookId: ""
 #   # nameformat: ""
 #   channels:
 #     - guilded:

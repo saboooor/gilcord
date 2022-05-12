@@ -3,15 +3,21 @@ const fs = require('fs');
 module.exports = async (discord, guilded, config) => {
 	// Load webhook clients and inject them into the servers object
 	config.servers.forEach(async srv => {
-		if (!srv.discord.serverId || !srv.discord.webhookId) return discord.logger.error('Discord serverId not specified in config!');
+		if (!srv.discord.serverId) return discord.logger.error('Discord serverId not specified in config!');
 
 		// Get the discord server and check if it exists
 		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
 		if (!discserver) return discord.logger.error(`${srv.discord.serverId} Discord server Id doesn't exist!`);
 
 		// Get the discord server's webhook and check if it exists
-		const webhook = (await discserver.fetchWebhooks()).get(srv.discord.webhookId);
-		if (!webhook) return discord.logger.error(`${discserver.name} Discord webhook doesn't exist!`);
+		let webhook = (await discserver.fetchWebhooks()).find(w => w.owner.id == discord.user.id);
+
+		// If the webhook doesn't exist, create it
+		if (!webhook) {
+			webhook = await discserver.createWebhook('Guilded-Discord Bridge', { reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
+			if (!webhook) return discord.logger.error(`${discserver.name}'s Webhook couldn't be created!`);
+			else discord.logger.warn(`${discserver.name}'s Webhook wasn't found, so it was created.`);
+		}
 
 		// Create a webhook client and inject it into the server's discord object
 		const whclient = new WebhookClient({ id: webhook.id, token: webhook.token });
@@ -21,7 +27,7 @@ module.exports = async (discord, guilded, config) => {
 		};
 
 		// Log
-		discord.logger.info(`${discserver.name} webhook loaded`);
+		discord.logger.info(`${discserver.name}'s Webhook loaded`);
 	});
 
 	// Load events
