@@ -118,4 +118,4 @@ dist
 data/
 .DS_Store
 package-lock.json
-config.json
+config.yml

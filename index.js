@@ -1,4 +1,6 @@
 const fs = require('fs');
+const YAML = require('yaml');
+const config = YAML.parse(fs.readFileSync('./config.yml', 'utf8'));
 
 const D = require('discord.js');
 const discord = new D.Client({
@@ -13,19 +15,17 @@ const discord = new D.Client({
 		D.GatewayIntentBits.GuildMembers,
 		D.GatewayIntentBits.MessageContent,
 	],
-	allowedMentions: {
-		repliedUser: false,
-	},
 });
 discord.type = { color: '\u001b[34m', name: 'discord' };
 discord.startTimestamp = Date.now();
-for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(discord);
+discord.login(config.discord.token);
+for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(discord, config);
 
-const { guiltoken } = require('./config.json');
 const G = require('guilded.js');
-const guilded = new G.Client({ token: guiltoken });
+const guilded = new G.Client({ token: config.guilded.token });
 guilded.type = { color: '\u001b[33m', name: 'guilded' };
 guilded.startTimestamp = Date.now();
-for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(guilded);
+guilded.login();
+for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(guilded, config);
 
-require('./bridge/load.js')(discord, guilded);
+require('./bridge/load.js')(discord, guilded, config);

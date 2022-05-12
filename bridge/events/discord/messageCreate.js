@@ -1,9 +1,9 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
-module.exports = async (discord, guilded, servers, message) => {
-	const srv = servers.find(s => s.discord.serverId == message.guild.id);
+module.exports = async (discord, guilded, config, message) => {
+	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv) return;
-	const bridge = srv.channels.find(b => b.discordId == message.channel.id);
+	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
 	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
 	const channelMatches = [...message.content.matchAll(ChannelsPattern)];
@@ -21,12 +21,8 @@ module.exports = async (discord, guilded, servers, message) => {
 		const user = discord.users.cache.get(match[1]);
 		message.content = message.content.replace(match[0], `@${user.tag}`);
 	});
-	const guildedmsg = (message.channel.name == 'global' && message.author.bot && (message.embeds || message.content)) ?
-		await guilded.messages.send(bridge.guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds[0] }) :
-		await guilded.messages.send(bridge.guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds[0] });
-	// You may replace the above 3 lines with:
-	// const guildedmsg = await guilded.messages.send(guildedId, { content: `**${message.author.tag}** ► ${message.content}`, embeds: message.embeds });
-	// I just have it this way for my own personal use, i don't think it'll affect anyone much
+	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
+	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${nameformat}${message.content}`, embeds: message.embeds[0] });
 	if (!bridge.messages) bridge.messages = {};
 	const { id, channelId } = guildedmsg;
 	bridge.messages[message.id] = { id, channelId };

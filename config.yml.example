@@ -1,0 +1,45 @@
+guilded: # This is the guilded side of the config
+  token: "" # This is the guilded bot's token
+  nameformat: "**{name}** ► " # this is the global prefix on the guilded messages ( use {name} for the name )
+
+discord: # This is the discord side of the config
+  token: "" # This is the discord bot's token
+  nameformat: "Guilded • {name}" # this is the global author name on the discord messages ( use {name} for the name )
+
+servers: # This is where you define the bridges
+  - guilded: # This is the guilded side of the server
+      serverId: "" # This is the guilded server's id
+    # nameformat: "" # This is optional (overrides the default)
+    discord: # This is the discord side of the server
+      serverId: "" # This is the discord server's id
+      webhookId: "" # This is the discord webhook's id, it must be in the same server
+    # nameformat: ""
+    channels: # This is the channels to bridge
+      - guilded: # This is the guilded side of the channel
+          channelId: "" # This is the guilded channel's id
+        # nameformat: ""
+        discord: # This is the discord side of the channel
+          channelId: "" # This is the discord channel's id
+        # nameformat: ""
+    # You may add more channels with this format
+    # - guilded:
+    #     channelId: ""
+    #   # nameformat: ""
+    #   discord:
+    #     channelId: ""
+    #   # nameformat: ""
+# You may add more servers with this format
+# - guilded:
+#     serverId: ""
+#   # nameformat: ""
+#   discord:
+#     serverId: ""
+#     webhookId: ""
+#   # nameformat: ""
+#   channels:
+#     - guilded:
+#         channelId: ""
+#       # nameformat: ""
+#       discord:
+#         channelId: ""
+#       # nameformat: ""
