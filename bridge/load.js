@@ -1,4 +1,3 @@
-const { WebhookClient } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded, config) => {
 	// Load webhook clients and inject them into the servers object
@@ -20,11 +19,10 @@ module.exports = async (discord, guilded, config) => {
 			else discord.logger.warn(`${discserver.name}'s Webhook wasn't found, so it was created.`);
 		}
 
-		// Create a webhook client and inject it into the server's discord object
-		const whclient = new WebhookClient({ id: webhook.id, token: webhook.token });
+		// Inject the webhook into the server's discord object
 		srv.discord = {
 			serverId: discserver.id,
-			webhook, whclient,
+			webhook,
 		};
 
 		// Log
