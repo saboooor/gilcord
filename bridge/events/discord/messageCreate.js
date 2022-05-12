@@ -60,7 +60,7 @@ module.exports = async (discord, guilded, config, message) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
 	// Send the message	to the guilded server
-	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${nameformat}${message.content}`, embeds: [message.embeds[0]] });
+	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${nameformat}${message.content}`, embeds: message.embeds[0] ? [message.embeds[0]] : undefined });
 
 	// Cache the message for editing and deleting
 	if (!config.message_expiry) return;
