@@ -1,11 +1,11 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 module.exports = async (discord, guilded, config, message) => {
-	// Check if the message is by the bot or has no content or embeds
-	if (message.createdById == guilded.user.id || (!message.content && !message.raw.embeds)) return;
-
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == message.serverId);
 	if (!srv) return;
+
+	// Check if the message is by the bot or has no content or embeds
+	if (message.createdById == guilded.user.id || (!message.content && !message.raw.embeds)) return;
 
 	// Get the channel config and check if it exists
 	const bridge = srv.channels.find(b => b.guilded.channelId == message.channelId);
