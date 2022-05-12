@@ -1,4 +1,5 @@
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
+const { Embed } = require('guilded.js');
 module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == newmsg.guild.id);
@@ -28,6 +29,17 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 		const user = discord.users.cache.get(match[1]);
 		newmsg.content = newmsg.content.replace(match[0], `@${user.tag}`);
 	});
+
+	const attachment = newmsg.attachments.first();
+	if (attachment) {
+		const imgurl = attachment.url;
+		const attachEmbed = new Embed()
+			.setColor(0x32343d)
+			.setTitle('**Attachment**')
+			.setDescription(`**[${attachment.name}](${imgurl})**`);
+		if (attachment.contentType.split('/')[0] == 'image') attachEmbed.setImage(imgurl);
+		newmsg.embeds.push(attachEmbed);
+	}
 
 	// Get the nameformat from the configs
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, newmsg.author.tag);

@@ -42,7 +42,7 @@ module.exports = async (discord, guilded, config, message) => {
 			.setTitle(`**Sticker:** ${sticker.name}`)
 			.setImage(imgurl)
 			.setColor(0x32343d);
-		message.embeds = [stickerEmbed];
+		message.embeds.push(stickerEmbed);
 	}
 
 	const attachment = message.attachments.first();
@@ -53,7 +53,7 @@ module.exports = async (discord, guilded, config, message) => {
 			.setTitle('**Attachment**')
 			.setDescription(`**[${attachment.name}](${imgurl})**`);
 		if (attachment.contentType.split('/')[0] == 'image') attachEmbed.setImage(imgurl);
-		message.embeds = [attachEmbed];
+		message.embeds.push(attachEmbed);
 	}
 
 	// Get the nameformat from the configs
