@@ -1,5 +1,6 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
+const { Embed } = require('guilded.js');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
@@ -33,11 +34,33 @@ module.exports = async (discord, guilded, config, message) => {
 		message.content = message.content.replace(match[0], `@${user.tag}`);
 	});
 
+	const sticker = message.stickers.first();
+	if (sticker) {
+		const imgurl = sticker.url;
+		if (imgurl.endsWith('json')) return discord.logger.info('Sticker is a JSON file, not supported yet, skipping...');
+		const stickerEmbed = new Embed()
+			.setTitle(`**Sticker:** ${sticker.name}`)
+			.setImage(imgurl)
+			.setColor(0x32343d);
+		message.embeds = [stickerEmbed];
+	}
+
+	const attachment = message.attachments.first();
+	if (attachment) {
+		const imgurl = attachment.url;
+		const attachEmbed = new Embed()
+			.setColor(0x32343d)
+			.setTitle('**Attachment**')
+			.setDescription(`**[${attachment.name}](${imgurl})**`);
+		if (attachment.contentType.split('/')[0] == 'image') attachEmbed.setImage(imgurl);
+		message.embeds = [attachEmbed];
+	}
+
 	// Get the nameformat from the configs
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
 	// Send the message	to the guilded server
-	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${nameformat}${message.content}`, embeds: message.embeds[0] });
+	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${nameformat}${message.content}`, embeds: [message.embeds[0]] });
 
 	// Cache the message for editing and deleting
 	if (!config.message_expiry) return;
