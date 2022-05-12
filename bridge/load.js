@@ -1,9 +1,8 @@
-const { servers } = require('../config.json');
 const { WebhookClient } = require('discord.js');
 const fs = require('fs');
-module.exports = async (discord, guilded) => {
+module.exports = async (discord, guilded, config) => {
 	// Load webhook clients and inject them into the servers object
-	servers.forEach(async srv => {
+	config.servers.forEach(async srv => {
 		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
 		if (!discserver) return discord.logger.error(`${srv.discord.serverId} Discord server Id doesn't exist!`);
 		const webhook = (await discserver.fetchWebhooks()).get(srv.discord.webhookId);
@@ -24,7 +23,7 @@ module.exports = async (discord, guilded) => {
 			if (!file.endsWith('.js')) return;
 			const event = require(`./events/${client.type.name}/${file}`);
 			const eventName = file.split('.')[0];
-			client.on(eventName, event.bind(null, discord, guilded, servers));
+			client.on(eventName, event.bind(null, discord, guilded, config));
 			delete require.cache[require.resolve(`./events/${client.type.name}/${file}`)];
 			count++;
 		});

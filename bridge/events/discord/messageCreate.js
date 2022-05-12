@@ -1,7 +1,7 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
-module.exports = async (discord, guilded, servers, message) => {
-	const srv = servers.find(s => s.discord.serverId == message.guild.id);
+module.exports = async (discord, guilded, config, message) => {
+	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv) return;
 	const bridge = srv.channels.find(b => b.discordId == message.channel.id);
 	if (!bridge) return;
@@ -21,7 +21,7 @@ module.exports = async (discord, guilded, servers, message) => {
 		const user = discord.users.cache.get(match[1]);
 		message.content = message.content.replace(match[0], `@${user.tag}`);
 	});
-	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat).replace(/{name}/g, message.author.tag);
+	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 	const guildedmsg = (message.channel.name == 'global' && message.author.bot && (message.embeds || message.content)) ?
 		await guilded.messages.send(bridge.guildedId, { content: message.content ? message.content : undefined, embeds: message.embeds[0] }) :
 		await guilded.messages.send(bridge.guildedId, { content: `${nameformat}${message.content}`, embeds: message.embeds[0] });

@@ -1,4 +1,4 @@
-module.exports = async (discord, guilded, servers, newmsg) => {
+module.exports = async (discord, guilded, { servers }, newmsg) => {
 	const srv = servers.find(s => s.guilded.serverId == newmsg.serverId);
 	if (!srv) return;
 	const bridge = srv.channels.find(b => b.guildedId == newmsg.channelId);
