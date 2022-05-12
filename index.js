@@ -1,7 +1,9 @@
+// Parse the config
 const fs = require('fs');
 const YAML = require('yaml');
 const config = YAML.parse(fs.readFileSync('./config.yml', 'utf8'));
 
+// Login to the Discord bot and load the handlers
 const D = require('discord.js');
 const discord = new D.Client({
 	partials: [
@@ -21,6 +23,7 @@ discord.startTimestamp = Date.now();
 discord.login(config.discord.token);
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(discord, config);
 
+// Login to the Guilded bot and load the handlers
 const G = require('guilded.js');
 const guilded = new G.Client({ token: config.guilded.token });
 guilded.type = { color: '\u001b[33m', name: 'guilded' };
@@ -28,4 +31,5 @@ guilded.startTimestamp = Date.now();
 guilded.login();
 for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(guilded, config);
 
+// Load the bridge
 require('./bridge/load.js')(discord, guilded, config);

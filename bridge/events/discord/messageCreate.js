@@ -1,31 +1,51 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
 module.exports = async (discord, guilded, config, message) => {
+	// Check if the message is by the bot or webhook
+	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
+
+	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv) return;
+
+	// Get the channel config and check if it exists
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
-	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
+
+	// Parse all channel mentions
 	const channelMatches = [...message.content.matchAll(ChannelsPattern)];
 	channelMatches.forEach(match => {
 		const channel = discord.channels.cache.get(match[1]);
 		message.content = message.content.replace(match[0], `#${channel.name}`);
 	});
+
+	// Parse all role mentions
 	const roleMatches = [...message.content.matchAll(RolesPattern)];
 	roleMatches.forEach(match => {
 		const role = message.guild.roles.cache.get(match[1]);
 		message.content = message.content.replace(match[0], `@${role.name}`);
 	});
+
+	// Parse all user mentions
 	const userMatches = [...message.content.matchAll(UsersPattern)];
 	userMatches.forEach(match => {
 		const user = discord.users.cache.get(match[1]);
 		message.content = message.content.replace(match[0], `@${user.tag}`);
 	});
+
+	// Get the nameformat from the configs
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
+
+	// Send the message	to the guilded server
 	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${nameformat}${message.content}`, embeds: message.embeds[0] });
+
+	// Cache the message for editing and deleting
+	if (!config.message_expiry) return;
 	if (!bridge.messages) bridge.messages = {};
 	const { id, channelId } = guildedmsg;
 	bridge.messages[message.id] = { id, channelId };
-	await sleep(120000);
+
+	// Delete cached message after the amount of time specified in the config
+	await sleep(config.message_expiry * 1000);
 	delete bridge.messages[message.id];
 };

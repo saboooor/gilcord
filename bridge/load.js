@@ -3,15 +3,24 @@ const fs = require('fs');
 module.exports = async (discord, guilded, config) => {
 	// Load webhook clients and inject them into the servers object
 	config.servers.forEach(async srv => {
+		if (!srv.discord.serverId || !srv.discord.webhookId) return discord.logger.error('Discord serverId not specified in config!');
+
+		// Get the discord server and check if it exists
 		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
 		if (!discserver) return discord.logger.error(`${srv.discord.serverId} Discord server Id doesn't exist!`);
+
+		// Get the discord server's webhook and check if it exists
 		const webhook = (await discserver.fetchWebhooks()).get(srv.discord.webhookId);
 		if (!webhook) return discord.logger.error(`${discserver.name} Discord webhook doesn't exist!`);
+
+		// Create a webhook client and inject it into the server's discord object
 		const whclient = new WebhookClient({ id: webhook.id, token: webhook.token });
 		srv.discord = {
 			serverId: discserver.id,
 			webhook, whclient,
 		};
+
+		// Log
 		discord.logger.info(`${discserver.name} webhook loaded`);
 	});
 
