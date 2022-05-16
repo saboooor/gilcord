@@ -1,5 +1,6 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
+const EmojisPattern = /(<a?)?(:\w+:)(\d{17,19})>/g;
 const { Embed } = require('guilded.js');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
@@ -32,6 +33,12 @@ module.exports = async (discord, guilded, config, message) => {
 	userMatches.forEach(match => {
 		const user = discord.users.cache.get(match[1]);
 		message.content = message.content.replace(match[0], `@${user.tag}`);
+	});
+
+	// Parse all emoji mentions
+	const emojiMatches = [...message.content.matchAll(EmojisPattern)];
+	emojiMatches.forEach(match => {
+		message.content = message.content.replace(match[0], match[2]);
 	});
 
 	const sticker = message.stickers.first();
