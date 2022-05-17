@@ -2,6 +2,8 @@ function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const parseMentions = require('../../functions/parseMentions.js');
 const parseInEmbed = require('../../functions/parseInEmbed.js');
 const { Embed } = require('guilded.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const fs = require('fs');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
@@ -9,6 +11,41 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Check if the message is by the bot or webhook
 	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
+
+	// Get the channel config and check if it exists
+	const listbridge = srv.lists.find(b => b.discord.channelId == message.channel.id);
+	if (listbridge) {
+		// Delete the message
+		message.delete();
+
+		// Create the guilded listitem
+		const item = await guilded.lists.create(listbridge.guilded.channelId, { message: message.content });
+
+		// Create Embed with item info
+		const ItemEmbed = new EmbedBuilder()
+			.setTitle(item.message)
+			.setTimestamp(Date.parse(item.createdAt))
+			.setAuthor({ name: message.member.user.tag, iconURL: message.member.user.avatarURL() });
+
+		// Create row with buttons to complete and delete
+		const row = new ActionRowBuilder()
+			.addComponents([
+				new ButtonBuilder()
+					.setEmoji({ name: '🔲' })
+					.setCustomId(`list_toggle_${item.id}`)
+					.setStyle(ButtonStyle.Secondary),
+			]);
+
+		// Send message
+		const msg = await message.channel.send({ embeds: [ItemEmbed], components: [row] });
+
+		const json = require(`../../../data/lists/${item.channelId}.json`);
+		json.items.push({
+			id: item.id,
+			messageId: msg.id,
+		});
+		fs.writeFileSync(`./data/lists/${listbridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
 
 	// Get the channel config and check if it exists
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
