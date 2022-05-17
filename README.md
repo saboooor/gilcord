@@ -4,6 +4,7 @@ Bridges chat channels between discord and guilded servers
 
 features:
 - Message editing
+- Message replies
 - Two-Way Message deleting
 - Message embeds
 - Message attachments
