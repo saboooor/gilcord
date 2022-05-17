@@ -1,6 +1,6 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
-const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
-const EmojisPattern = /(<a?)?(:\w+:)(\d{17,19})>/g;
+const parseMentions = require('../../functions/parseMentions.js');
+const parseInEmbed = require('../../functions/parseInEmbed.js');
 const { Embed } = require('guilded.js');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
@@ -14,33 +14,11 @@ module.exports = async (discord, guilded, config, message) => {
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
 
-	// Parse all channel mentions
-	const channelMatches = [...message.content.matchAll(ChannelsPattern)];
-	channelMatches.forEach(match => {
-		const channel = discord.channels.cache.get(match[1]);
-		message.content = message.content.replace(match[0], `#${channel.name}`);
-	});
+	// Parse all mentions on message content and embeds (literally can't find a better way to do the embed part)
+	message.content = parseMentions(message.content, discord, message.guild);
+	parseInEmbed(message.embeds, discord, message.guild);
 
-	// Parse all role mentions
-	const roleMatches = [...message.content.matchAll(RolesPattern)];
-	roleMatches.forEach(match => {
-		const role = message.guild.roles.cache.get(match[1]);
-		message.content = message.content.replace(match[0], `@${role.name}`);
-	});
-
-	// Parse all user mentions
-	const userMatches = [...message.content.matchAll(UsersPattern)];
-	userMatches.forEach(match => {
-		const user = discord.users.cache.get(match[1]);
-		message.content = message.content.replace(match[0], `@${user.tag}`);
-	});
-
-	// Parse all emoji mentions
-	const emojiMatches = [...message.content.matchAll(EmojisPattern)];
-	emojiMatches.forEach(match => {
-		message.content = message.content.replace(match[0], match[2]);
-	});
-
+	// Add an embed if the message is a sticker
 	const sticker = message.stickers.first();
 	if (sticker) {
 		const imgurl = sticker.url;
@@ -52,6 +30,7 @@ module.exports = async (discord, guilded, config, message) => {
 		message.embeds.push(stickerEmbed);
 	}
 
+	// Add an embed for any attachments
 	const attachment = message.attachments.first();
 	if (attachment) {
 		const imgurl = attachment.url;

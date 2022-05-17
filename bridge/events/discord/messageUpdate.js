@@ -1,5 +1,6 @@
-const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
 const { Embed } = require('guilded.js');
+const parseMentions = require('../../functions/parseMentions.js');
+const parseInEmbed = require('../../functions/parseInEmbed.js');
 module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == newmsg.guild.id);
@@ -9,27 +10,10 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const bridge = srv.channels.find(b => b.discord.channelId == newmsg.channel.id);
 	if (!bridge || !bridge.messages[newmsg.id]) return;
 
-	// Parse all channel mentions
-	const channelMatches = [...newmsg.content.matchAll(ChannelsPattern)];
-	channelMatches.forEach(match => {
-		const channel = discord.channels.cache.get(match[1]);
-		newmsg.content = newmsg.content.replace(match[0], `#${channel.name}`);
-	});
+	newmsg.content = parseMentions(newmsg.content, discord, newmsg.guild);
+	parseInEmbed(newmsg.embeds, discord, newmsg.guild);
 
-	// Parse all role mentions
-	const roleMatches = [...newmsg.content.matchAll(RolesPattern)];
-	roleMatches.forEach(match => {
-		const role = newmsg.guild.roles.cache.get(match[1]);
-		newmsg.content = newmsg.content.replace(match[0], `@${role.name}`);
-	});
-
-	// Parse all user mentions
-	const userMatches = [...newmsg.content.matchAll(UsersPattern)];
-	userMatches.forEach(match => {
-		const user = discord.users.cache.get(match[1]);
-		newmsg.content = newmsg.content.replace(match[0], `@${user.tag}`);
-	});
-
+	// Add an embed for any attachments
 	const attachment = newmsg.attachments.first();
 	if (attachment) {
 		const imgurl = attachment.url;
