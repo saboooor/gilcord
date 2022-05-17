@@ -2,7 +2,11 @@
 
 Bridges chat channels between discord and guilded servers
 
-features:
+Supported Channel types:
+- Text
+- List
+
+Features:
 - Message editing
 - Message replies
 - Two-Way Message deleting
