@@ -32,10 +32,15 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Cache the message for editing and deleting
 	if (!config.message_expiry) return;
-	if (!bridge.messages) bridge.messages = {};
-	bridge.messages[message.id] = discordmsg.id;
+	if (!bridge.messages) bridge.messages = [];
+	const obj = {
+		guilded: message.id,
+		discord: discordmsg.id,
+		fromGuilded: true,
+	};
+	bridge.messages.push(obj);
 
 	// Delete cached message after the amount of time specified in the config
 	await sleep(config.message_expiry * 1000);
-	delete bridge.messages[message.id];
+	bridge.messages.splice(bridge.messages.indexOf(obj), 1);
 };

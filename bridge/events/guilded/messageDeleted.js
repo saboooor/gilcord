@@ -5,9 +5,13 @@ module.exports = async (discord, guilded, { servers }, message) => {
 
 	// Get the channel config and check if it and the cached message exists
 	const bridge = srv.channels.find(b => b.guilded.channelId == message.channelId);
-	if (!bridge || !bridge.messages[message.id]) return;
+	if (!bridge || !bridge.messages) return;
+
+	const cachedMessage = bridge.messages.find(m => m.guilded == message.id);
+	if (!cachedMessage) return;
 
 	// Delete the message and remove the cached message
-	srv.discord.webhook.deleteMessage(bridge.messages[message.id]);
-	delete bridge.messages[message.id];
+	const channel = discord.channels.cache.get(bridge.discord.channelId);
+	channel.messages.delete(cachedMessage.discord).catch(err => discord.logger.error(err));
+	bridge.messages.splice(bridge.messages.indexOf(cachedMessage), 1);
 };

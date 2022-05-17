@@ -8,7 +8,10 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 
 	// Get the channel config and check if it and the cached message exists
 	const bridge = srv.channels.find(b => b.discord.channelId == newmsg.channel.id);
-	if (!bridge || !bridge.messages[newmsg.id]) return;
+	if (!bridge || !bridge.messages) return;
+
+	const cachedMessage = bridge.messages.find(m => m.discord == newmsg.id);
+	if (!cachedMessage || !cachedMessage.fromDiscord) return;
 
 	newmsg.content = parseMentions(newmsg.content, discord, newmsg.guild);
 	parseInEmbed(newmsg.embeds, discord, newmsg.guild);
@@ -29,6 +32,5 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, newmsg.author.tag);
 
 	// Edit the message
-	const { channelId, id } = bridge.messages[newmsg.id];
-	guilded.messages.update(channelId, id, { content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
+	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
 };

@@ -4,8 +4,10 @@ Bridges chat channels between discord and guilded servers
 
 features:
 - Message editing
-- Message deleting
+- Two-Way Message deleting
 - Message embeds
+- Message attachments
+- Message stickers
 - Multi-server
 - Webhooks on discord side (guilded soon when avatar/name is editable)
 

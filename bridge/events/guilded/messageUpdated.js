@@ -5,11 +5,14 @@ module.exports = async (discord, guilded, { servers }, newmsg) => {
 
 	// Get the channel config and check if it and the cached message exists
 	const bridge = srv.channels.find(b => b.guilded.channelId == newmsg.channelId);
-	if (!bridge || !bridge.messages[newmsg.id]) return;
+	if (!bridge || !bridge.messages) return;
+
+	const cachedMessage = bridge.messages.find(m => m.guilded == newmsg.id);
+	if (!cachedMessage || !cachedMessage.fromGuilded) return;
 
 	// Edit the message
 	srv.discord.webhook.editMessage(
-		bridge.messages[newmsg.id], {
+		cachedMessage.discord, {
 			content: newmsg.content,
 			embeds: newmsg.embeds,
 		},
