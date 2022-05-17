@@ -22,13 +22,18 @@ module.exports = async (discord, guilded, config, item) => {
 		.setTitle(item.message)
 		.setTimestamp(Date.parse(item.createdAt))
 		.setAuthor({ name: item.member.user.name, iconURL: item.member.user.avatar });
+	if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);
 
-	// Create row with buttons to complete and delete
+	// Create row with button to complete
 	const row = new ActionRowBuilder()
 		.addComponents([
 			new ButtonBuilder()
 				.setEmoji({ name: '🔲' })
 				.setCustomId(`list_toggle_${item.id}`)
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
+				.setEmoji({ name: '📝' })
+				.setCustomId(`list_note_${item.id}`)
 				.setStyle(ButtonStyle.Secondary),
 		]);
 
@@ -36,6 +41,7 @@ module.exports = async (discord, guilded, config, item) => {
 	const channel = discord.channels.cache.get(listbridge.discord.channelId);
 	const msg = await channel.send({ embeds: [ItemEmbed], components: [row] });
 
+	// Push the item in the json file
 	const json = require(`../../../data/lists/${item.channelId}.json`);
 	json.items.push({
 		id: item.id,

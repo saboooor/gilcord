@@ -48,6 +48,7 @@ module.exports = async (discord, guilded, config) => {
 						const ItemEmbed = new EmbedBuilder()
 							.setTitle(item.message)
 							.setTimestamp(Date.parse(item.updatedAt ?? item.createdAt));
+						if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);
 						if (member) ItemEmbed.setAuthor({ name: member.user.name, iconURL: member.user.avatar });
 
 						const row = new ActionRowBuilder()
@@ -57,9 +58,9 @@ module.exports = async (discord, guilded, config) => {
 									.setCustomId(`list_toggle_${item.id}`)
 									.setStyle(ButtonStyle.Secondary),
 								new ButtonBuilder()
-									.setLabel('Delete')
-									.setCustomId(`list_delete_${item.id}`)
-									.setStyle(ButtonStyle.Danger),
+									.setEmoji({ name: '📝' })
+									.setCustomId(`list_note_${item.id}`)
+									.setStyle(ButtonStyle.Secondary),
 							]);
 
 						const msg = await discchannel.send({ embeds: [ItemEmbed], components: [row] });
@@ -81,7 +82,16 @@ module.exports = async (discord, guilded, config) => {
 		let count = 0;
 		const files = fs.readdirSync(`./bridge/events/${client.type.name}/`);
 		files.forEach(file => {
-			if (!file.endsWith('.js')) return;
+			if (!file.endsWith('.js')) {
+				const subfiles = fs.readdirSync(`./bridge/events/${client.type.name}/${file}`).filter(subfile => subfile.endsWith('.js'));
+				subfiles.forEach(subfile => {
+					const event = require(`./events/${client.type.name}/${file}/${subfile}`);
+					client.on(file, event.bind(null, discord, guilded, config));
+					delete require.cache[require.resolve(`./events/${client.type.name}/${file}/${subfile}`)];
+					count++;
+				});
+				return;
+			}
 			const event = require(`./events/${client.type.name}/${file}`);
 			const eventName = file.split('.')[0];
 			client.on(eventName, event.bind(null, discord, guilded, config));
