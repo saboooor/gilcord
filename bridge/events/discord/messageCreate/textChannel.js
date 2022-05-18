@@ -1,6 +1,6 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
-const parseMentions = require('../../functions/parseMentions.js');
-const parseInEmbed = require('../../functions/parseInEmbed.js');
+const parseMentions = require('../../../functions/parseMentions.js');
+const parseInEmbed = require('../../../functions/parseInEmbed.js');
 const { Embed } = require('guilded.js');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists

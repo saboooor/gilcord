@@ -1,6 +1,6 @@
 # The amount of time to remove messages from the edit/delete cache
 # Setting this to 0 will disable the delete/edit feature
-message-expiry: 120 # Cached message expiry in seconds
+message-expiry: 3600 # Cached message expiry in seconds
 
 guilded: # This is the guilded side of the config
   token: "" # This is the guilded bot's token
@@ -10,20 +10,19 @@ discord: # This is the discord side of the config
   token: "" # This is the discord bot's token
   nameformat: "Guilded • {name}" # this is the global author name on the discord messages ( use {name} for the name )
 
-servers: # This is where you define the bridges
+servers: # This is where you define the bridge servers
   - guilded: # This is the guilded side of the server
       serverId: "" # This is the guilded server's id
     # nameformat: "" # This is optional (overrides the default)
     discord: # This is the discord side of the server
       serverId: "" # This is the discord server's id
     # nameformat: ""
-    channels: # This is the channels to bridge
+    channels: # This is the text channels to bridge
       - guilded: # This is the guilded side of the channel
           channelId: "" # This is the guilded channel's id
         # nameformat: ""
         discord: # This is the discord side of the channel
           channelId: "" # This is the discord channel's id
-        # nameformat: ""
     # You may add more channels with this format
     # - guilded:
     #     channelId: ""
@@ -31,6 +30,19 @@ servers: # This is where you define the bridges
     #   discord:
     #     channelId: ""
     #   # nameformat: ""
+    lists: # This is the list channels to bridge
+      - guilded: # This is the guilded side of the channel
+          channelId: "" # This is the guilded channel's id
+        discord: # This is the discord side of the channel
+          channelId: "" # This is the discord channel's id
+          permission: "ManageMessages" # This is the permission required to be able to manage list items
+          # You may find a list of permissions here: https://github.com/discordjs/discord-api-types/blob/main/payloads/common.ts#L10
+    # You may add more channels with this format
+    # - guilded:
+    #     channelId: ""
+    #   discord:
+    #     channelId: ""
+    #     permission: ""
 # You may add more servers with this format
 # - guilded:
 #     serverId: ""
