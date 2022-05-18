@@ -6,11 +6,14 @@
     "type": "git",
     "url": "git+https://github.com/saboooor/guilded-discord-bridge.git"
   },
+  "scripts": {
+    "start": "node index.js"
+  },
   "main": "index.js",
   "author": "saboooor",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.0.0-dev.1652702635-5e9b757",
+    "discord.js": "^14.0.0-dev.1652832627-dfe449c",
     "eslint": "^8.15.0",
     "fs": "^0.0.1-security",
     "guilded.js": "^0.10.3",
