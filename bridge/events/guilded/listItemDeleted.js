@@ -1,7 +1,4 @@
 module.exports = async (discord, guilded, config, item) => {
-	// Check if list was created by client
-	if (item.createdBy == guilded.user.id) return;
-
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == item.serverId);
 	if (!srv) return;
