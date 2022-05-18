@@ -1,4 +1,4 @@
-![Untitled drawing (1)](https://user-images.githubusercontent.com/42164502/168778146-3c8efa1c-c3f1-4576-b4b1-d51edd9abe1c.png)
+![logo](https://user-images.githubusercontent.com/42164502/168778146-3c8efa1c-c3f1-4576-b4b1-d51edd9abe1c.png)
 
 # A guilded-discord chat bridge
 
