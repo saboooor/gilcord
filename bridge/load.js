@@ -48,6 +48,7 @@ module.exports = async (discord, guilded, config) => {
 						if (!member) member = await guilded.members.fetch(item.serverId, item.createdBy).catch(err => guilded.logger.error(err));
 
 						const ItemEmbed = new EmbedBuilder()
+							.setColor(0x2f3136)
 							.setTitle(item.message)
 							.setTimestamp(Date.parse(item.updatedAt ?? item.createdAt));
 						if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);

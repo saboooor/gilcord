@@ -26,6 +26,7 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Create Embed with item info
 	const ItemEmbed = new EmbedBuilder()
+		.setColor(0x2f3136)
 		.setTitle(item.message)
 		.setTimestamp(Date.parse(item.createdAt));
 	if (note) ItemEmbed.setDescription(note);
