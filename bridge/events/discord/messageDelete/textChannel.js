@@ -1,6 +1,6 @@
-module.exports = async (discord, guilded, { servers }, message) => {
+module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
-	const srv = servers.find(s => s.discord.serverId == message.guild.id);
+	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv) return;
 
 	// Get the channel config and check if it and the cached message exists

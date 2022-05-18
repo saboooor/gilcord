@@ -35,6 +35,14 @@ servers: # This is where you define the bridge servers
           channelId: "" # This is the guilded channel's id
         discord: # This is the discord side of the channel
           channelId: "" # This is the discord channel's id
+          permission: "ManageMessages" # This is the permission required to be able to manage list items
+          # You may find a list of permissions here: https://github.com/discordjs/discord-api-types/blob/main/payloads/common.ts#L10
+    # You may add more channels with this format
+    # - guilded:
+    #     channelId: ""
+    #   discord:
+    #     channelId: ""
+    #     permission: ""
 # You may add more servers with this format
 # - guilded:
 #     serverId: ""

@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
@@ -15,6 +15,9 @@ module.exports = async (discord, guilded, config, message) => {
 	// Delete the message
 	message.delete();
 
+	// Check if member has the required permission
+	if (!message.member.permissionsIn(message.channel).has(PermissionsBitField.Flags[listbridge.discord.permission])) return;
+
 	// Create the guilded listitem
 	const content = message.content.split('\n');
 	const itemmsg = content.shift();
@@ -24,8 +27,7 @@ module.exports = async (discord, guilded, config, message) => {
 	// Create Embed with item info
 	const ItemEmbed = new EmbedBuilder()
 		.setTitle(item.message)
-		.setTimestamp(Date.parse(item.createdAt))
-		.setAuthor({ name: message.member.user.tag, iconURL: message.member.user.avatarURL() });
+		.setTimestamp(Date.parse(item.createdAt));
 	if (note) ItemEmbed.setDescription(note);
 
 	// Create row with buttons to complete and delete

@@ -26,5 +26,6 @@ module.exports = async (discord, guilded, config, interaction) => {
 	// Get the text field value and update the item
 	const note = interaction.fields.getTextInputValue('note');
 	const content = interaction.fields.getTextInputValue('content');
-	guilded.lists.update(item.channelId, item.id, { message: content, note: { content: note ? note : '\u200b' } });
+	guilded.lists.update(item.channelId, item.id, { message: content, note: { content: note ? note : ' ' } });
+	interaction.deferUpdate();
 };

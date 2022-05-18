@@ -20,8 +20,7 @@ module.exports = async (discord, guilded, config, item) => {
 	// Create Embed with item info
 	const ItemEmbed = new EmbedBuilder()
 		.setTitle(item.message)
-		.setTimestamp(Date.parse(item.createdAt))
-		.setAuthor({ name: item.member.user.name, iconURL: item.member.user.avatar });
+		.setTimestamp(Date.parse(item.createdAt));
 	if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);
 
 	// Create row with button to complete

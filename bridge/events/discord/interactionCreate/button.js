@@ -1,3 +1,4 @@
+const { PermissionsBitField } = require('discord.js');
 module.exports = async (discord, guilded, config, interaction) => {
 	// Check if the interaction is a button
 	if (!interaction.isButton()) return;
@@ -18,6 +19,9 @@ module.exports = async (discord, guilded, config, interaction) => {
 	// Get the channel config and check if it exists
 	const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
 	if (!listbridge) return;
+
+	// Check if member has the required permission
+	if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags[listbridge.discord.permission])) return;
 
 	// Fetch the list item and check if it exists
 	const item = await guilded.lists.fetch(listbridge.guilded.channelId, listId);
