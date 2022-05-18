@@ -1,6 +1,9 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded, config) => {
+	// Create data folders if they don't exist
+	if (!fs.existsSync('./data')) fs.mkdirSync('./data');
+
 	// Load webhook clients and inject them into the servers object
 	config.servers.forEach(async srv => {
 		if (!srv.discord.serverId) return discord.logger.error('Discord serverId not specified in config!');
@@ -31,7 +34,6 @@ module.exports = async (discord, guilded, config) => {
 
 		// Load list config
 		if (srv.lists) {
-			if (!fs.existsSync('./data')) fs.mkdirSync('./data');
 			if (!fs.existsSync('./data/lists')) fs.mkdirSync('./data/lists');
 			for (const list of srv.lists) {
 				if (!fs.existsSync(`./data/lists/${list.guilded.channelId}.json`)) fs.writeFileSync(`./data/lists/${list.guilded.channelId}.json`, '{}');
@@ -72,6 +74,12 @@ module.exports = async (discord, guilded, config) => {
 					}
 					fs.writeFileSync(`./data/lists/${list.guilded.channelId}.json`, JSON.stringify(json));
 				}
+			}
+		}
+		if (srv.channels) {
+			if (!fs.existsSync('./data/messages')) fs.mkdirSync('./data/messages');
+			for (const bridge of srv.channels) {
+				fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
 			}
 		}
 	});

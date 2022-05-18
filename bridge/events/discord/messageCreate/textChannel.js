@@ -1,4 +1,5 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
+const fs = require('fs');
 const parseMentions = require('../../../functions/parseMentions.js');
 const parseInEmbed = require('../../../functions/parseInEmbed.js');
 const { Embed } = require('guilded.js');
@@ -14,6 +15,9 @@ module.exports = async (discord, guilded, config, message) => {
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
 
+	// Get cached messages
+	let json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+
 	// Parse all mentions on message content and embeds (literally can't find a better way to do the embed part)
 	message.content = parseMentions(message.content, discord, message.guild);
 	parseInEmbed(message.embeds, discord, message.guild);
@@ -21,8 +25,8 @@ module.exports = async (discord, guilded, config, message) => {
 	// Parse all replies in the message
 	let reply; let replyMessageIds;
 	if (message.reference && message.reference.messageId) {
-		if (bridge.messages && bridge.messages.find(m => m.discord == message.reference.messageId)) {
-			replyMessageIds = [bridge.messages.find(m => m.discord == message.reference.messageId).guilded];
+		if (json.find(m => m.discord == message.reference.messageId)) {
+			replyMessageIds = [json.find(m => m.discord == message.reference.messageId).guilded];
 		}
 		else {
 			const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: message.reference.messageId, limit: 1 })).first();
@@ -62,15 +66,17 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Cache the message for editing and deleting
 	if (!config.message_expiry) return;
-	if (!bridge.messages) bridge.messages = [];
 	const obj = {
 		guilded: guildedmsg.id,
 		discord: message.id,
 		fromDiscord: true,
 	};
-	bridge.messages.push(obj);
+	json.push(obj);
+	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 
 	// Delete cached message after the amount of time specified in the config
 	await sleep(config.message_expiry * 1000);
-	bridge.messages.splice(bridge.messages.indexOf(obj), 1);
+	json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+	json.splice(json.indexOf(obj), 1);
+	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 };

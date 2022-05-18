@@ -5,17 +5,19 @@ module.exports = async (discord, guilded, config, newmsg) => {
 
 	// Get the channel config and check if it and the cached message exists
 	const bridge = srv.channels.find(b => b.guilded.channelId == newmsg.channelId);
-	if (!bridge || !bridge.messages) return;
+	if (!bridge) return;
 
-	const cachedMessage = bridge.messages.find(m => m.guilded == newmsg.id);
+	// Get the cached message and check if it exists	const json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+	const json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
+	const cachedMessage = json.find(m => m.guilded == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromGuilded) return;
 
 	// Parse all replies in the message
 	const replies = [];
 	if (newmsg.replyMessageIds[0]) {
 		for (const replyId of newmsg.replyMessageIds) {
-			if (bridge.messages && bridge.messages.find(m => m.guilded == replyId)) {
-				const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: bridge.messages.find(m => m.guilded == replyId).discord, limit: 1 })).first();
+			if (json.find(m => m.guilded == replyId)) {
+				const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: json.find(m => m.guilded == replyId).discord, limit: 1 })).first();
 				if (replyMsg) replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
 			}
 			else {
