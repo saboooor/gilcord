@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = async (discord, guilded, config, item) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == item.serverId);
-	if (!srv) return;
+	if (!srv || !srv.lists) return;
 
 	// Get the channel config and check if it exists
 	const listbridge = srv.lists.find(b => b.guilded.channelId == item.channelId);

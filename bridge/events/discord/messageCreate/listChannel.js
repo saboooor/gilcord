@@ -3,7 +3,7 @@ const fs = require('fs');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
-	if (!srv) return;
+	if (!srv || !srv.lists) return;
 
 	// Check if the message is by the bot or webhook
 	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
