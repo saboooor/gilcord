@@ -22,5 +22,10 @@
     "guilded.js": "^0.10.3",
     "winston": "^3.7.2",
     "yaml": "^2.1.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/saboooor/guilded-discord-bridge/issues"
+  },
+  "homepage": "https://github.com/saboooor/guilded-discord-bridge#readme",
+  "keywords": []
 }
