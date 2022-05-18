@@ -18,8 +18,13 @@ Features:
 - Multi-server
 - Webhooks on discord side (guilded soon when avatar/name is editable)
 
-Here's a video showing the bot
-https://smhsmh.club/files/discord-guilded-bridge.mp4
+Here's a video showing the bot's text bridge
+https://smhsmh.club/files/discord-guilded-bridge-text.mp4
+
+Here's a video showing the bot's list bridge
+https://smhsmh.club/files/discord-guilded-bridge-list-1.mp4
+Here's a video showing the permissions for lists (set to Administrator in the video)
+https://smhsmh.club/files/discord-guilded-bridge-list-2.mp4
 
 [![Discord](https://discord.com/api/guilds/811354612547190794/widget.png)](https://discord.gg/Bsefgbaedz)
 [![Guilded](https://guilded.nico.engineer/shields/vanity/cactie?style=flat)](https://guilded.gg/cactie)
