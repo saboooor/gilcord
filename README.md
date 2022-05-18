@@ -18,6 +18,10 @@ Features:
 - Multi-server
 - Webhooks on discord side (guilded soon when avatar/name is editable)
 
+Known Issues:
+- Messages with images on Guilded have an ! in them
+- List doesn't uncomplete (Library bug, use guilded's main branch to fix this)
+
 Here's a video showing the bot's text bridge
 https://smhsmh.club/files/discord-guilded-bridge-text.mp4
 
