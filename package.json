@@ -19,7 +19,7 @@
     "discord.js": "^14.0.0-dev.1652832627-dfe449c",
     "eslint": "^8.15.0",
     "fs": "^0.0.1-security",
-    "guilded.js": "^0.10.3",
+    "guilded.js": "^0.12.0",
     "winston": "^3.7.2",
     "yaml": "^2.1.0"
   },
