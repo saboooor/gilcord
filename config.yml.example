@@ -1,6 +1,6 @@
 # The amount of time to remove messages from the edit/delete cache
 # Setting this to 0 will disable the delete/edit feature
-message-expiry: 3600 # Cached message expiry in seconds
+message_expiry: 3600 # Cached message expiry in seconds
 
 guilded: # This is the guilded side of the config
   token: "" # This is the guilded bot's token
