@@ -16,6 +16,7 @@ Features:
 - Message attachments
 - Message stickers
 - Multi-server
+- Parses all mentions, timestamps, and emojis (if the emoji with the same name exists)
 - Webhooks on discord side (guilded soon when avatar/name is editable)
 
 Known Issues:

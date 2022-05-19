@@ -14,7 +14,7 @@ module.exports = async (discord, guilded, config, interaction) => {
 
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == interaction.guild.id);
-	if (!srv) return;
+	if (!srv || srv.lists) return;
 
 	// Get the channel config and check if it exists
 	const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
