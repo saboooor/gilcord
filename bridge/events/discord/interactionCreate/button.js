@@ -34,6 +34,9 @@ module.exports = async (discord, guilded, config, interaction) => {
 		const docbridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
 		if (!docbridge) return;
 
+		// Check if member has the required permission
+		if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.ManageMessages)) return;
+
 		// Fetch the document
 		target = await guilded.docs.fetch(docbridge.guilded.channelId, targetId);
 	}
