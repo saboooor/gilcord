@@ -1,20 +1,20 @@
 const { EmbedBuilder } = require('discord.js');
 module.exports = async (discord, guilded, config, doc) => {
 	// Get the server config and check if it exists
-	const srv = config.docs.find(s => s.guilded.serverId == doc.serverId);
+	const srv = config.servers.find(s => s.guilded.serverId == doc.serverId);
 	if (!srv || !srv.docs) return;
 
 	// Get the channel config and check if it exists
-	const listbridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
-	if (!listbridge) return;
+	const docbridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
+	if (!docbridge) return;
 
 	// Get the cached document
-	const json = require(`../../../data/lists/${doc.channelId}.json`);
+	const json = require(`../../../data/docs/${doc.channelId}.json`);
 	const cacheddoc = json.docs.find(i => i.id == doc.id);
 	if (!cacheddoc) return;
 
 	// Get channel and message
-	const channel = discord.channels.cache.get(listbridge.discord.channelId);
+	const channel = discord.channels.cache.get(docbridge.discord.channelId);
 	const message = (await channel.messages.fetch({ around: cacheddoc.messageId, limit: 1 })).first();
 
 	// Create Embed with doc info

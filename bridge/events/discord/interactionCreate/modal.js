@@ -2,30 +2,43 @@ module.exports = async (discord, guilded, config, interaction) => {
 	// Check if the interaction is a modal
 	if (!interaction.isModalSubmit()) return;
 
-	// Get the listId and button from the customId
+	// Get the target Id and button from the customId
 	const split = interaction.customId.split('_');
-	const listId = split.pop();
-	const buttonId = split.join('_');
+	const targetId = split.pop();
+	const modalId = split.join('_');
 
 	// Get the button from the available buttons in the bot
-	const button = discord.buttons.get(buttonId);
-	if (!button) return;
+	const modal = discord.modals.get(modalId);
+	if (!modal) return;
 
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == interaction.guild.id);
-	if (!srv || srv.lists) return;
+	if (!srv) return;
 
-	// Get the channel config and check if it exists
-	const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
-	if (!listbridge) return;
+	// Set the target
+	let target;
+	if (split[0] == 'list' && srv.lists) {
+		// Get the channel config and check if it exists
+		const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
+		if (!listbridge) return;
 
-	// Fetch the list item and check if it exists
-	const item = await guilded.lists.fetch(listbridge.guilded.channelId, listId);
-	if (!item) return;
+		// Fetch the list item and check if it exists
+		target = await guilded.lists.fetch(listbridge.guilded.channelId, targetId);
+	}
+	else if (split[0] == 'doc' && srv.docs) {
+		// Get the channel config and check if it exists
+		const docbridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
+		if (!docbridge) return;
 
-	// Get the text field value and update the item
-	const note = interaction.fields.getTextInputValue('note');
-	const content = interaction.fields.getTextInputValue('content');
-	guilded.lists.update(item.channelId, item.id, { message: content, note: { content: note ? note : ' ' } });
-	interaction.deferUpdate();
+		// Fetch the list item and check if it exists
+		target = await guilded.docs.fetch(docbridge.guilded.channelId, targetId);
+	}
+	if (!target) return;
+
+	// Defer and execute the button
+	try {
+		interaction.deferUpdate();
+		modal.execute(discord, guilded, interaction, target);
+	}
+	catch (err) { discord.logger.error(err); }
 };

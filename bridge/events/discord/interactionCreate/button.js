@@ -3,9 +3,9 @@ module.exports = async (discord, guilded, config, interaction) => {
 	// Check if the interaction is a button
 	if (!interaction.isButton()) return;
 
-	// Get the listId and button from the customId
+	// Get the target Id and button from the customId
 	const split = interaction.customId.split('_');
-	const listId = split.pop();
+	const targetId = split.pop();
 	const buttonId = split.join('_');
 
 	// Get the button from the available buttons in the bot
@@ -14,20 +14,32 @@ module.exports = async (discord, guilded, config, interaction) => {
 
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == interaction.guild.id);
-	if (!srv || srv.lists) return;
+	if (!srv) return;
 
-	// Get the channel config and check if it exists
-	const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
-	if (!listbridge) return;
+	// Set the target
+	let target;
+	if (split[0] == 'list' && srv.lists) {
+		// Get the channel config and check if it exists
+		const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
+		if (!listbridge) return;
 
-	// Check if member has the required permission
-	if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags[listbridge.discord.permission])) return;
+		// Check if member has the required permission
+		if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags[listbridge.discord.permission])) return;
 
-	// Fetch the list item and check if it exists
-	const item = await guilded.lists.fetch(listbridge.guilded.channelId, listId);
-	if (!item) return;
+		// Fetch the list item and check if it exists
+		target = await guilded.lists.fetch(listbridge.guilded.channelId, targetId);
+	}
+	else if (split[0] == 'doc' && srv.docs) {
+		// Get the channel config and check if it exists
+		const docbridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
+		if (!docbridge) return;
+
+		// Fetch the list item and check if it exists
+		target = await guilded.docs.fetch(docbridge.guilded.channelId, targetId);
+	}
+	if (!target) return;
 
 	// Defer and execute the button
-	try { button.execute(discord, guilded, interaction, item); }
+	try { button.execute(discord, guilded, interaction, target); }
 	catch (err) { discord.logger.error(err); }
 };
