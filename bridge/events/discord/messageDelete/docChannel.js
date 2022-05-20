@@ -8,7 +8,7 @@ module.exports = async (discord, guilded, config, message) => {
 	const docbridge = srv.docs.find(b => b.discord.channelId == message.channel.id);
 	if (!docbridge) return;
 
-	// Get the cached list item
+	// Get the cached document
 	const json = require(`../../../../data/docs/${docbridge.guilded.channelId}.json`);
 	const cacheddoc = json.docs.find(i => i.messageId == message.id);
 	if (!cacheddoc) return;
@@ -22,8 +22,8 @@ module.exports = async (discord, guilded, config, message) => {
 	let member = message.guild.members.cache.get(log.executor.id);
 	if (!member) member = await message.guild.members.fetch(log.executor.id);
 
-	// Delete the item and remove the cached item
+	// Delete the document and remove the cached doc
 	guilded.docs.delete(docbridge.guilded.channelId, cacheddoc.id).catch(err => guilded.logger.error(err));
 	json.docs.splice(json.docs.indexOf(cacheddoc), 1);
-	fs.writeFileSync(`./data/lists/${docbridge.guilded.channelId}.json`, JSON.stringify(json));
+	fs.writeFileSync(`./data/docs/${docbridge.guilded.channelId}.json`, JSON.stringify(json));
 };

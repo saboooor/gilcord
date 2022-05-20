@@ -16,7 +16,7 @@ module.exports = {
 				.setRequired(false);
 			if (item.note && item.note.content) noteinput.setValue(item.note.content);
 
-			// Create and show a modal for the user to fill out the note
+			// Create and show a modal for the user to edit the list item
 			const modal = new ModalBuilder()
 				.setTitle('Edit this list item')
 				.setCustomId(`list_note_${item.id}`)

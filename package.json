@@ -16,7 +16,7 @@
   "author": "saboooor",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.0.0-dev.1652832627-dfe449c",
+    "discord.js": "^14.0.0-dev.1652918983-adf461b",
     "eslint": "^8.15.0",
     "fs": "^0.0.1-security",
     "guilded.js": "^0.12.0",

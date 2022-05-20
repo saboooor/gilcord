@@ -32,7 +32,7 @@ module.exports = async (discord, guilded, config, message) => {
 		.setDescription(content)
 		.setTimestamp(Date.parse(doc.createdAt));
 
-	// Create row with buttons to complete and delete
+	// Create row with buttons to edit
 	const row = new ActionRowBuilder()
 		.addComponents([
 			new ButtonBuilder()

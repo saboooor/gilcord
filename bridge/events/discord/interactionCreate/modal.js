@@ -2,12 +2,12 @@ module.exports = async (discord, guilded, config, interaction) => {
 	// Check if the interaction is a modal
 	if (!interaction.isModalSubmit()) return;
 
-	// Get the target Id and button from the customId
+	// Get the target Id and modal Id from the customId
 	const split = interaction.customId.split('_');
 	const targetId = split.pop();
 	const modalId = split.join('_');
 
-	// Get the button from the available buttons in the bot
+	// Get the modal from the available modals in the bot
 	const modal = discord.modals.get(modalId);
 	if (!modal) return;
 
@@ -22,7 +22,7 @@ module.exports = async (discord, guilded, config, interaction) => {
 		const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
 		if (!listbridge) return;
 
-		// Fetch the list item and check if it exists
+		// Fetch the list item
 		target = await guilded.lists.fetch(listbridge.guilded.channelId, targetId);
 	}
 	else if (split[0] == 'doc' && srv.docs) {
@@ -30,12 +30,12 @@ module.exports = async (discord, guilded, config, interaction) => {
 		const docbridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
 		if (!docbridge) return;
 
-		// Fetch the list item and check if it exists
+		// Fetch the dicument
 		target = await guilded.docs.fetch(docbridge.guilded.channelId, targetId);
 	}
 	if (!target) return;
 
-	// Defer and execute the button
+	// Defer and execute the modal
 	try {
 		interaction.deferUpdate();
 		modal.execute(discord, guilded, interaction, target);
