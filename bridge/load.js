@@ -77,6 +77,50 @@ module.exports = async (discord, guilded, config) => {
 				}
 			}
 		}
+
+		// Load doc config
+		if (srv.docs) {
+			if (!fs.existsSync('./data/docs')) fs.mkdirSync('./data/docs');
+			for (const doclist of srv.docs) {
+				if (!fs.existsSync(`./data/docs/${doclist.guilded.channelId}.json`)) fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, '{}');
+				const guilchannel = await guilded.channels.fetch(doclist.guilded.channelId);
+				const discchannel = await discord.channels.cache.get(doclist.discord.channelId);
+				const json = require(`../data/docs/${doclist.guilded.channelId}.json`);
+				if (!json.docs) {
+					const docs = await guilchannel.getDocs();
+					json.docs = [];
+					for (const doc of docs) {
+						let member = guilded.members.cache.get(`${doc.serverId}:${doc.createdBy}`);
+						if (!member) member = await guilded.members.fetch(doc.serverId, doc.createdBy).catch(err => guilded.logger.error(err));
+
+						const docEmbed = new EmbedBuilder()
+							.setColor(0x2f3136)
+							.setTitle(doc.title)
+							.setDescription(doc.content)
+							.setTimestamp(Date.parse(doc.updatedAt ?? doc.createdAt));
+
+						const row = new ActionRowBuilder()
+							.addComponents([
+								new ButtonBuilder()
+									.setEmoji({ name: '📝' })
+									.setCustomId(`doc_edit_${doc.id}`)
+									.setStyle(ButtonStyle.Secondary),
+							]);
+
+						const msg = await discchannel.send({ embeds: [docEmbed], components: [row] });
+
+						json.docs.push({
+							id: doc.id,
+							messageId: msg.id,
+						});
+
+					}
+					fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, JSON.stringify(json));
+				}
+			}
+		}
+
+		// Load text config
 		if (srv.channels) {
 			if (!fs.existsSync('./data/messages')) fs.mkdirSync('./data/messages');
 			for (const bridge of srv.channels) {

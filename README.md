@@ -7,6 +7,7 @@ Bridges chat channels between discord and guilded servers
 Supported Channel types:
 - Text
 - List
+- Docs
 
 Features:
 - Message editing
