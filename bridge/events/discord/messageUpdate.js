@@ -10,7 +10,7 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const bridge = srv.channels.find(b => b.discord.channelId == newmsg.channel.id);
 	if (!bridge) return;
 
-	// Get the cached message and check if it exists	const json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+	// Get the cached message and check if it exists
 	const json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
 	const cachedMessage = json.find(m => m.discord == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromDiscord) return;
@@ -34,5 +34,6 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, newmsg.author.tag);
 
 	// Edit the message
+	if (config.debug) guilded.logger.info(`Message update from Discord: ${{ content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined }}`);
 	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
 };

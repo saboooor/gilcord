@@ -23,6 +23,7 @@ module.exports = async (discord, guilded, config, message) => {
 	const title = msgcontent.shift();
 	const content = msgcontent.join('\n');
 	if (!content || !title) return message.member.send('**Invalid document**\nPlease put the title in the first line and use a new line for the content.');
+	if (config.debug) guilded.logger.info(`Doc create from Discord: ${{ title, content }}`);
 	const doc = await guilded.docs.create(docbridge.guilded.channelId, { title, content });
 
 	// Create Embed with doc info

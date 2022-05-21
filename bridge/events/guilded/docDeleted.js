@@ -14,5 +14,6 @@ module.exports = async (discord, guilded, config, doc) => {
 
 	// Get channel and delete the message from discord
 	const channel = discord.channels.cache.get(docbridge.discord.channelId);
+	if (config.debug) discord.logger.info(`Doc delete from Guilded: ${cacheddoc}`);
 	channel.messages.delete(cacheddoc.messageId).catch(err => discord.logger.error(err));
 };

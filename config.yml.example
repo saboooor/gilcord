@@ -7,6 +7,9 @@ message_cache:
   timeout: 3600 # Cached message expiry in seconds
   max_messages: 100 # Maximum amount of messages to cache
 
+# This will log all messages in the console, this is really messy
+debug: false
+
 guilded: # This is the guilded side of the config
   token: "" # This is the guilded bot's token
   nameformat: "**{name}** ► " # this is the global prefix on the guilded messages ( use {name} for the name )
