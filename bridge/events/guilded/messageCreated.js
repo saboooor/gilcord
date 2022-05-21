@@ -53,7 +53,7 @@ module.exports = async (discord, guilded, config, message) => {
 		content: message.content,
 		embeds: message.raw.embeds,
 	};
-	if (config.debug) discord.logger.info(`Message created from Guilded: ${webhookopt}`);
+	if (config.debug) discord.logger.info(`Message created from Guilded: ${JSON.stringify(webhookopt)}`);
 	const discordmsg = await srv.discord.webhook.send(webhookopt);
 
 	// Cache the message for editing and deleting
@@ -64,12 +64,12 @@ module.exports = async (discord, guilded, config, message) => {
 		fromGuilded: true,
 	};
 	json.push(obj);
-	if (config.debug) discord.logger.info(`Cached message from Guilded: ${obj}`);
+	if (config.debug) discord.logger.info(`Cached message from Guilded: ${JSON.stringify(obj)}`);
 	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 
 	// Delete old cached message if max messages is reached
 	if (config.message_cache.max_messages && json.length > config.message_cache.max_messages) {
-		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${json[0]}`);
+		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(json[0])}`);
 		json.shift();
 		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 	}
@@ -77,7 +77,7 @@ module.exports = async (discord, guilded, config, message) => {
 	// Delete cached message after the amount of time specified in the config
 	if (config.message_cache.timeout) {
 		await sleep(config.message_cache.timeout * 1000);
-		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${obj}`);
+		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(obj)}`);
 		json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 		json.splice(json.indexOf(obj), 1);
 		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));

@@ -34,6 +34,6 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, newmsg.author.tag);
 
 	// Edit the message
-	if (config.debug) guilded.logger.info(`Message update from Discord: ${{ content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined }}`);
+	if (config.debug) guilded.logger.info(`Message update from Discord: ${JSON.stringify({ content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined })}`);
 	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
 };

@@ -57,7 +57,7 @@ module.exports = async (discord, guilded, config, message) => {
 	}
 
 	// Delete the item and remove the cached item
-	if (config.debug) guilded.logger.info(`List item delete from Discord: ${cacheditem}`);
+	if (config.debug) guilded.logger.info(`List item delete from Discord: ${JSON.stringify(cacheditem)}`);
 	guilded.lists.delete(listbridge.guilded.channelId, cacheditem.id).catch(err => guilded.logger.error(err));
 	json.items.splice(json.items.indexOf(cacheditem), 1);
 	fs.writeFileSync(`./data/lists/${listbridge.guilded.channelId}.json`, JSON.stringify(json));

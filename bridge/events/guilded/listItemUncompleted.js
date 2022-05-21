@@ -30,6 +30,6 @@ module.exports = async (discord, guilded, config, item) => {
 				.setStyle(ButtonStyle.Secondary),
 		]);
 
-	if (config.debug) discord.logger.info(`List item uncompleteted from Guilded: ${{ components: [row] }}`);
+	if (config.debug) discord.logger.info(`List item uncompleteted from Guilded: ${JSON.stringify({ components: [row] })}`);
 	message.edit({ components: [row] });
 };

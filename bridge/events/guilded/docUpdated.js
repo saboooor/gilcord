@@ -24,6 +24,6 @@ module.exports = async (discord, guilded, config, doc) => {
 		.setDescription(doc.content)
 		.setTimestamp(Date.parse(doc.updatedAt));
 
-	if (config.debug) discord.logger.info(`Doc update from Guilded: ${{ embeds: [docEmbed] }}`);
+	if (config.debug) discord.logger.info(`Doc update from Guilded: ${JSON.stringify({ embeds: [docEmbed] })}`);
 	message.edit({ embeds: [docEmbed] });
 };
