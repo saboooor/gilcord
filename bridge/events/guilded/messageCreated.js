@@ -55,7 +55,7 @@ module.exports = async (discord, guilded, config, message) => {
 	});
 
 	// Cache the message for editing and deleting
-	if (!config.message_expiry) return;
+	if (!config.message_cache || !config.message_cache.enabled) return;
 	const obj = {
 		guilded: message.id,
 		discord: discordmsg.id,
@@ -64,9 +64,17 @@ module.exports = async (discord, guilded, config, message) => {
 	json.push(obj);
 	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 
+	// Delete old cached message if max messages is reached
+	if (config.message_cache.max_messages && json.length > config.message_cache.max_messages) {
+		json.shift();
+		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
+
 	// Delete cached message after the amount of time specified in the config
-	await sleep(config.message_expiry * 1000);
-	json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
-	json.splice(json.indexOf(obj), 1);
-	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	if (config.message_cache.timeout) {
+		await sleep(config.message_cache.timeout * 1000);
+		json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+		json.splice(json.indexOf(obj), 1);
+		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
 };
