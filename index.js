@@ -33,7 +33,7 @@ guilded.type = { color: '\u001b[33m', name: 'guilded' };
 	for (const client of [discord, guilded]) {
 		client.startTimestamp = Date.now();
 		await client.login(config.discord.token);
-		for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(client);
+		for (const handler of fs.readdirSync('./handlers').filter(file => file.endsWith('.js'))) require(`./handlers/${handler}`)(client, config);
 	}
 
 	// Load the bridge
