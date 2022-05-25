@@ -15,6 +15,7 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Delete the message and remove the cached message
 	const channel = discord.channels.cache.get(bridge.discord.channelId);
+	if (config.debug) discord.logger.info('Message delete from Guilded');
 	channel.messages.delete(cachedMessage.discord).catch(err => discord.logger.error(err));
 	json.splice(json.indexOf(cachedMessage), 1);
 	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));

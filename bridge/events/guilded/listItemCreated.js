@@ -39,6 +39,7 @@ module.exports = async (discord, guilded, config, item) => {
 
 	// Send message
 	const channel = discord.channels.cache.get(listbridge.discord.channelId);
+	if (config.debug) discord.logger.info(`List item created from Guilded: ${JSON.stringify({ embeds: [ItemEmbed], components: [row] })}`);
 	const msg = await channel.send({ embeds: [ItemEmbed], components: [row] });
 
 	// Push the item in the json file

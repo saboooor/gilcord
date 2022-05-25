@@ -15,6 +15,9 @@ module.exports = async (discord, guilded, config, message) => {
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
 
+	// Check if the author is a bot and if the bot is allowed to send messages
+	if (message.author.bot && bridge.exempt_bots) return;
+
 	// Get cached messages
 	let json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 
@@ -62,21 +65,33 @@ module.exports = async (discord, guilded, config, message) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
 	// Send the message	to the guilded server
+	if (config.debug) guilded.logger.info(`Message create from Discord: ${JSON.stringify({ content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds[0] ? [message.embeds[0]] : undefined, replyMessageIds })}`);
 	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds[0] ? [message.embeds[0]] : undefined, replyMessageIds });
 
 	// Cache the message for editing and deleting
-	if (!config.message_expiry) return;
+	if (!config.message_cache || !config.message_cache.enabled) return;
 	const obj = {
 		guilded: guildedmsg.id,
 		discord: message.id,
 		fromDiscord: true,
 	};
 	json.push(obj);
+	if (config.debug) guilded.logger.info(`Cached message from Discord: ${JSON.stringify(obj)}`);
 	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 
+	// Delete old cached message if max messages is reached
+	if (config.message_cache.max_messages && json.length > config.message_cache.max_messages) {
+		if (config.debug) guilded.logger.info(`Deleted old cached message from Discord: ${JSON.stringify(json[0])}`);
+		json.shift();
+		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
+
 	// Delete cached message after the amount of time specified in the config
-	await sleep(config.message_expiry * 1000);
-	json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
-	json.splice(json.indexOf(obj), 1);
-	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	if (config.message_cache.timeout) {
+		await sleep(config.message_cache.timeout * 1000);
+		if (config.debug) guilded.logger.info(`Deleted old cached message from Discord: ${JSON.stringify(obj)}`);
+		json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+		json.splice(json.indexOf(obj), 1);
+		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
 };

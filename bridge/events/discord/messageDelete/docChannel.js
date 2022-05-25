@@ -23,6 +23,7 @@ module.exports = async (discord, guilded, config, message) => {
 	if (!member) member = await message.guild.members.fetch(log.executor.id);
 
 	// Delete the document and remove the cached doc
+	if (config.debug) guilded.logger.info(`Doc delete from Discord: ${JSON.stringify(cacheddoc)}`);
 	guilded.docs.delete(docbridge.guilded.channelId, cacheddoc.id).catch(err => guilded.logger.error(err));
 	json.docs.splice(json.docs.indexOf(cacheddoc), 1);
 	fs.writeFileSync(`./data/docs/${docbridge.guilded.channelId}.json`, JSON.stringify(json));

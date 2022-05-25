@@ -33,10 +33,9 @@ module.exports = async (discord, guilded, config, newmsg) => {
 	if (replies[0]) newmsg.content = `${replies.join('\n')}\n\n${newmsg.content}`;
 
 	// Edit the message
+	if (config.debug) discord.logger.info(`Message updated from Guilded ${JSON.stringify({ content: newmsg.content, embeds: newmsg.embeds })}`);
 	srv.discord.webhook.editMessage(
-		cachedMessage.discord, {
-			content: newmsg.content,
-			embeds: newmsg.embeds,
-		},
+		cachedMessage.discord,
+		{ content: newmsg.content, embeds: newmsg.embeds },
 	);
 };

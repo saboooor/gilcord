@@ -1,6 +1,14 @@
-# The amount of time to remove messages from the edit/delete cache
-# Setting this to 0 will disable the delete/edit feature
-message_expiry: 3600 # Cached message expiry in seconds
+# The configuration for the message caching system.
+# setting enabled to false will disable the message reply/edit/delete support
+# setting timeout and max_messages to 0 will keep the messages forever until the message is deleted unless message cache is disabled
+# both settings are interchangeable
+message_cache:
+  enabled: true
+  timeout: 3600 # Cached message expiry in seconds
+  max_messages: 100 # Maximum amount of messages to cache
+
+# This will log all messages in the console, this is really messy
+debug: false
 
 guilded: # This is the guilded side of the config
   token: "" # This is the guilded bot's token
@@ -23,6 +31,7 @@ servers: # This is where you define the bridge servers
         # nameformat: ""
         discord: # This is the discord side of the channel
           channelId: "" # This is the discord channel's id
+      # exempt_bots: true # This will exempt bots from the bridge
     # You may add more channels with this format
     # - guilded:
     #     channelId: ""
@@ -30,6 +39,7 @@ servers: # This is where you define the bridge servers
     #   discord:
     #     channelId: ""
     #   # nameformat: ""
+    # # exempt_bots: true
     lists: # This is the list channels to bridge
       - guilded: # This is the guilded side of the channel
           channelId: "" # This is the guilded channel's id

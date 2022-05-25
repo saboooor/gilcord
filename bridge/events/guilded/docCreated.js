@@ -35,6 +35,7 @@ module.exports = async (discord, guilded, config, doc) => {
 
 	// Send message
 	const channel = discord.channels.cache.get(docbridge.discord.channelId);
+	if (config.debug) discord.logger.info(`Doc create from Guilded: ${JSON.stringify({ embeds: [docEmbed], components: [row] })}`);
 	const msg = await channel.send({ embeds: [docEmbed], components: [row] });
 
 	// Push the doc in the json file

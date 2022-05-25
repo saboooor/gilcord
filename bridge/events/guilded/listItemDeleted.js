@@ -14,5 +14,6 @@ module.exports = async (discord, guilded, config, item) => {
 
 	// Get channel and delete the message from discord
 	const channel = discord.channels.cache.get(listbridge.discord.channelId);
+	if (config.debug) discord.logger.info(`List item deleted from Guilded: ${JSON.stringify(cacheditem)}`);
 	channel.messages.delete(cacheditem.messageId).catch(err => discord.logger.error(err));
 };

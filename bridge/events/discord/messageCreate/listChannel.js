@@ -22,6 +22,7 @@ module.exports = async (discord, guilded, config, message) => {
 	const content = message.content.split('\n');
 	const itemmsg = content.shift();
 	const note = content.join('\n');
+	if (config.debug) guilded.logger.info(`List item create from Discord: ${JSON.stringify({ message: itemmsg, note: note ? { content: note } : undefined })}`);
 	const item = await guilded.lists.create(listbridge.guilded.channelId, { message: itemmsg, note: note ? { content: note } : undefined });
 
 	// Create Embed with item info

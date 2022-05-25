@@ -1,5 +1,6 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const fs = require('fs');
+const { UserType } = require('guilded.js');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == message.serverId);
@@ -12,13 +13,16 @@ module.exports = async (discord, guilded, config, message) => {
 	const bridge = srv.channels.find(b => b.guilded.channelId == message.channelId);
 	if (!bridge) return;
 
-	// Get cached messages
-	let json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
-
 	// Get the message author and check if it exists
 	message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
 	if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById).catch(err => guilded.logger.error(err));
 	if (!message.member) return;
+
+	// Check if the author is a bot and if the bot is allowed to send messages
+	if (message.member.user.type == UserType.Bot && bridge.exempt_bots) return;
+
+	// Get cached messages
+	let json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
 
 	// Parse all replies in the message
 	const replies = [];
@@ -47,26 +51,39 @@ module.exports = async (discord, guilded, config, message) => {
 	const nameformat = (bridge.discord.nameformat ?? srv.discord.nameformat ?? config.discord.nameformat).replace(/{name}/g, message.member.user.name);
 
 	// Send the message	to the discord server
-	const discordmsg = await srv.discord.webhook.send({
+	const webhookopt = {
 		avatarURL: message.member.user.avatar,
 		username: nameformat,
 		content: message.content,
 		embeds: message.raw.embeds,
-	});
+	};
+	if (config.debug) discord.logger.info(`Message created from Guilded: ${JSON.stringify(webhookopt)}`);
+	const discordmsg = await srv.discord.webhook.send(webhookopt);
 
 	// Cache the message for editing and deleting
-	if (!config.message_expiry) return;
+	if (!config.message_cache || !config.message_cache.enabled) return;
 	const obj = {
 		guilded: message.id,
 		discord: discordmsg.id,
 		fromGuilded: true,
 	};
 	json.push(obj);
+	if (config.debug) discord.logger.info(`Cached message from Guilded: ${JSON.stringify(obj)}`);
 	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 
+	// Delete old cached message if max messages is reached
+	if (config.message_cache.max_messages && json.length > config.message_cache.max_messages) {
+		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(json[0])}`);
+		json.shift();
+		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
+
 	// Delete cached message after the amount of time specified in the config
-	await sleep(config.message_expiry * 1000);
-	json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
-	json.splice(json.indexOf(obj), 1);
-	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	if (config.message_cache.timeout) {
+		await sleep(config.message_cache.timeout * 1000);
+		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(obj)}`);
+		json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+		json.splice(json.indexOf(obj), 1);
+		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	}
 };
