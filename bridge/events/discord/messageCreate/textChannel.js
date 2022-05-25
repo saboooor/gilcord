@@ -15,6 +15,9 @@ module.exports = async (discord, guilded, config, message) => {
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
 
+	// Check if the author is a bot and if the bot is allowed to send messages
+	if (message.author.bot && bridge.exempt_bots) return;
+
 	// Get cached messages
 	let json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 

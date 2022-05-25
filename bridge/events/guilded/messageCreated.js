@@ -1,5 +1,6 @@
 function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const fs = require('fs');
+const { UserType } = require('guilded.js');
 module.exports = async (discord, guilded, config, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == message.serverId);
@@ -12,13 +13,16 @@ module.exports = async (discord, guilded, config, message) => {
 	const bridge = srv.channels.find(b => b.guilded.channelId == message.channelId);
 	if (!bridge) return;
 
-	// Get cached messages
-	let json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
-
 	// Get the message author and check if it exists
 	message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
 	if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById).catch(err => guilded.logger.error(err));
 	if (!message.member) return;
+
+	// Check if the author is a bot and if the bot is allowed to send messages
+	if (message.member.user.type == UserType.Bot && bridge.exempt_bots) return;
+
+	// Get cached messages
+	let json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
 
 	// Parse all replies in the message
 	const replies = [];

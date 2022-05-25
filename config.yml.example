@@ -31,6 +31,7 @@ servers: # This is where you define the bridge servers
         # nameformat: ""
         discord: # This is the discord side of the channel
           channelId: "" # This is the discord channel's id
+      # exempt_bots: true # This will exempt bots from the bridge
     # You may add more channels with this format
     # - guilded:
     #     channelId: ""
@@ -38,6 +39,7 @@ servers: # This is where you define the bridge servers
     #   discord:
     #     channelId: ""
     #   # nameformat: ""
+    # # exempt_bots: true
     lists: # This is the list channels to bridge
       - guilded: # This is the guilded side of the channel
           channelId: "" # This is the guilded channel's id
