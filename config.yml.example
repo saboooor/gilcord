@@ -18,10 +18,10 @@ discord: # This is the discord side of the config
   token: "" # This is the discord bot's token
   nameformat: "Guilded • {name}" # this is the global author name on the discord messages ( use {name} for the name )
   presence:
-    status: 'online'
+    status: 'dnd'
     activity:
       name: 'Guilded-Discord Bridge'
-      type: 'Playing'
+      type: 'Watching'
 
 servers: # This is where you define the bridge servers
   - guilded: # This is the guilded side of the server
