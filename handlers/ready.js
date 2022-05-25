@@ -11,6 +11,6 @@ module.exports = (client, config) => {
 			if (config.discord.presence.status) client.user.setStatus(config.discord.presence.status);
 			if (config.discord.presence.activity) client.user.setPresence({ activities: [{ name: config.discord.presence.activity.name ?? 'Guilded-Discord Bridge', type: ActivityType[config.discord.presence.activity.type ?? 'Playing'] }] });
 		}
-		else { client.user.setPresence({ activities: [{ name: 'Guilded-Discord Bridge', type: 'Playing' }] }); }
+		else { client.user.setPresence({ activities: [{ name: 'Guilded-Discord Bridge' }] }); }
 	});
 };
