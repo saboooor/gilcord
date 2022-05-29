@@ -18,6 +18,15 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	newmsg.content = parseMentions(newmsg.content, discord, newmsg.guild);
 	parseInEmbed(newmsg.embeds, discord, newmsg.guild);
 
+	// Parse all replies in the message
+	let reply;
+	if (newmsg.reference && newmsg.reference.messageId) {
+		if (!json.find(m => m.discord == newmsg.reference.messageId)) {
+			const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: newmsg.reference.messageId, limit: 1 })).first();
+			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${parseMentions(replyMsg.content, discord, newmsg.guild)}\``;
+		}
+	}
+
 	// Add an embed for any attachments
 	const attachment = newmsg.attachments.first();
 	if (attachment) {
@@ -34,6 +43,6 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, newmsg.author.tag);
 
 	// Edit the message
-	if (config.debug) guilded.logger.info(`Message update from Discord: ${JSON.stringify({ content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined })}`);
-	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
+	if (config.debug) guilded.logger.info(`Message update from Discord: ${JSON.stringify({ content: `${reply ? reply : ''}\n${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined })}`);
+	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${reply ? reply : ''}\n${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
 };

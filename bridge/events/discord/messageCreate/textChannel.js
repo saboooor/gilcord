@@ -33,7 +33,7 @@ module.exports = async (discord, guilded, config, message) => {
 		}
 		else {
 			const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: message.reference.messageId, limit: 1 })).first();
-			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${replyMsg.content}\``;
+			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${parseMentions(replyMsg.content, discord, message.guild)}\``;
 		}
 	}
 

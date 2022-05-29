@@ -145,7 +145,12 @@ module.exports = async (discord, guilded, config) => {
 		if (srv.channels) {
 			if (!fs.existsSync('./data/messages')) fs.mkdirSync('./data/messages');
 			for (const bridge of srv.channels) {
-				fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
+				if (config.message_cache && config.message_cache.enabled && !config.message_cache.timeout && !config.message_cache.max_messages && !fs.existsSync(`./data/messages/${bridge.guilded.channelId}.json`)) {
+					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
+				}
+				else {
+					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
+				}
 			}
 		}
 	});
