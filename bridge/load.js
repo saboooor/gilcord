@@ -12,22 +12,43 @@ module.exports = async (discord, guilded, config) => {
 		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
 		if (!discserver) return discord.logger.error(`${srv.discord.serverId} Discord server Id doesn't exist!`);
 
-		// Get the discord server's webhook and check if it exists
-		let webhook = (await discserver.fetchWebhooks()).find(w => w.owner.id == discord.user.id);
+		// Load the webhooks
+		const webhooks = (await discserver.fetchWebhooks()).filter(w => w.owner.id == discord.user.id);
+		if (srv.discord.per_channel_webhooks) {
+			for (const bridge of srv.channels) {
+				// Get the channel's webhook
+				let webhook = webhooks.find(w => w.channelId == bridge.discord.channelId);
 
-		// If the webhook doesn't exist, create it
-		if (!webhook) {
-			const channel = discserver.channels.cache.filter(c => c.isText()).first();
-			webhook = await channel.createWebhook('Guilded-Discord Bridge', { reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
-			if (!webhook) return discord.logger.error(`${discserver.name}'s Webhook couldn't be created!`);
-			else discord.logger.warn(`${discserver.name}'s Webhook wasn't found, so it was created.`);
+				// If the webhook doesn't exist, create it
+				if (!webhook) {
+					const channel = discserver.channels.cache.get(bridge.discord.channelId);
+					webhook = await channel.createWebhook('Guilded-Discord Bridge', { reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
+					if (!webhook) return discord.logger.error(`${discserver.name}'s #${channel.name} Webhook couldn't be created!`);
+					else discord.logger.warn(`${discserver.name}'s #${channel.name} Webhook wasn't found, so it was created.`);
+				}
+
+				// Inject the webhook into the channel's object
+				bridge.discord.webhook = webhook;
+			}
 		}
+		else {
+			// Get the discord server's webhook
+			let webhook = webhooks.first();
 
-		// Inject the webhook into the server's discord object
-		srv.discord = {
-			serverId: discserver.id,
-			webhook,
-		};
+			// If the webhook doesn't exist, create it
+			if (!webhook) {
+				const channel = discserver.channels.cache.filter(c => c.isText()).first();
+				webhook = await channel.createWebhook('Guilded-Discord Bridge', { reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
+				if (!webhook) return discord.logger.error(`${discserver.name}'s Webhook couldn't be created!`);
+				else discord.logger.warn(`${discserver.name}'s Webhook wasn't found, so it was created.`);
+			}
+
+			// Inject the webhook into the server's discord object
+			srv.discord = {
+				serverId: discserver.id,
+				webhook,
+			};
+		}
 
 		// Log
 		discord.logger.info(`${discserver.name}'s Webhook loaded`);

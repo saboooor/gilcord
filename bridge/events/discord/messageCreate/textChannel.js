@@ -8,12 +8,12 @@ module.exports = async (discord, guilded, config, message) => {
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv) return;
 
-	// Check if the message is by the bot or webhook
-	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
-
 	// Get the channel config and check if it exists
 	const bridge = srv.channels.find(b => b.discord.channelId == message.channel.id);
 	if (!bridge) return;
+
+	// Check if the message is by the bot or webhook
+	if (message.author.id == discord.user.id || (srv.discord.webhook && message.webhookId == srv.discord.webhook.id) || (bridge.discord.webhook && message.webhookId == bridge.discord.webhook.id)) return;
 
 	// Check if the author is a bot and if the bot is allowed to send messages
 	if (message.author.bot && bridge.exempt_bots) return;

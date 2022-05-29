@@ -29,6 +29,7 @@ servers: # This is where you define the bridge servers
     # nameformat: "" # This is optional (overrides the default)
     discord: # This is the discord side of the server
       serverId: "" # This is the discord server's id
+      per_channel_webhooks: false # Enabling this will create webhooks in every bridged channel, only use if the channels are active
     # nameformat: ""
     channels: # This is the text channels to bridge
       - guilded: # This is the guilded side of the channel

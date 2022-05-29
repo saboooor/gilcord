@@ -1,12 +1,12 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded, config, message) => {
+	// Check if the message is by a bot
+	if (message.author.bot) return;
+
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv || !srv.lists) return;
-
-	// Check if the message is by the bot or webhook
-	if (message.author.id == discord.user.id || message.webhookId == srv.discord.webhook.id) return;
 
 	// Get the channel config and check if it exists
 	const listbridge = srv.lists.find(b => b.discord.channelId == message.channel.id);
