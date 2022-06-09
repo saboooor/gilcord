@@ -26,7 +26,7 @@ module.exports = async (discord, guilded, config, message) => {
 	parseInEmbed(message.embeds, discord, message.guild);
 
 	// Parse all replies in the message
-	let reply; let replyMessageIds;
+	let reply, replyMessageIds;
 	if (message.reference && message.reference.messageId) {
 		if (json.find(m => m.discord == message.reference.messageId)) {
 			replyMessageIds = [json.find(m => m.discord == message.reference.messageId).guilded];
