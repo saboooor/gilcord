@@ -35,13 +35,8 @@ module.exports = async (discord, guilded, config, newmsg) => {
 	// Edit the message
 	if (config.debug) discord.logger.info(`Message updated from Guilded ${JSON.stringify({ content: newmsg.content, embeds: newmsg.embeds })}`);
 
-	bridge.discord.webhook
-		? bridge.discord.webhook.editMessage(
-			cachedMessage.discord,
-			{ content: newmsg.content, embeds: newmsg.embeds },
-		)
-		: srv.discord.webhook.editMessage(
-			cachedMessage.discord,
-			{ content: newmsg.content, embeds: newmsg.embeds },
-		);
+	[bridge.discord.webhook ? 'bridge' : 'srv'].discord.webhook.editMessage(
+		cachedMessage.discord,
+		{ content: newmsg.content, embeds: newmsg.embeds },
+	);
 };
