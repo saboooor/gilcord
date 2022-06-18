@@ -1,6 +1,7 @@
+const { InteractionType } = require('discord.js');
 module.exports = async (discord, guilded, config, interaction) => {
 	// Check if the interaction is autocomplete
-	if (!interaction.isAutocomplete()) return;
+	if (interaction.type != InteractionType.autoComplete) return;
 
 	// Get the command from the available commands in the bot
 	const command = discord.commands.get(interaction.commandName);
