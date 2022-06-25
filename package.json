@@ -1,6 +1,6 @@
 {
   "name": "discord-guilded-bridge",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "a simple discord-guilded bridge",
   "repository": {
     "type": "git",
@@ -16,11 +16,11 @@
   "author": "saboooor",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.0.0-dev.1655511041-2681929",
+    "discord.js": "^14.0.0-dev.1656060492-e24970e",
     "eslint": "^8.18.0",
     "fs": "^0.0.1-security",
     "guilded.js": "^0.13.0",
-    "winston": "^3.7.2",
+    "winston": "^3.8.0",
     "yaml": "^2.1.1"
   },
   "bugs": {
