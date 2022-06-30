@@ -23,21 +23,21 @@ module.exports = async (discord, guilded, config, message) => {
 	let member = message.guild.members.cache.get(log.executor.id);
 	if (!member) member = await message.guild.members.fetch(log.executor.id);
 
+	// Create row with buttons to complete and delete
+	const row = new ActionRowBuilder()
+		.addComponents([
+			new ButtonBuilder()
+				.setEmoji({ name: '🔲' })
+				.setCustomId(`list_toggle_${cacheditem.id}`)
+				.setStyle(ButtonStyle.Secondary),
+			new ButtonBuilder()
+				.setEmoji({ name: '📝' })
+				.setCustomId(`list_note_${cacheditem.id}`)
+				.setStyle(ButtonStyle.Secondary),
+		]);
+
 	// Check if member has the required permission
 	if (!member || !member.permissionsIn(message.channel).has(PermissionsBitField.Flags[listbridge.discord.permission])) {
-		// Create row with buttons to complete and delete
-		const row = new ActionRowBuilder()
-			.addComponents([
-				new ButtonBuilder()
-					.setEmoji({ name: '🔲' })
-					.setCustomId(`list_toggle_${cacheditem.id}`)
-					.setStyle(ButtonStyle.Secondary),
-				new ButtonBuilder()
-					.setEmoji({ name: '📝' })
-					.setCustomId(`list_note_${cacheditem.id}`)
-					.setStyle(ButtonStyle.Secondary),
-			]);
-
 		// Fetch the list item and check if it exists
 		const item = await guilded.lists.fetch(listbridge.guilded.channelId, cacheditem.id);
 		if (!item) return;
@@ -58,7 +58,27 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Delete the item and remove the cached item
 	if (config.debug) guilded.logger.info(`List item delete from Discord: ${JSON.stringify(cacheditem)}`);
-	guilded.lists.delete(listbridge.guilded.channelId, cacheditem.id).catch(err => guilded.logger.error(err));
+	await guilded.lists.delete(listbridge.guilded.channelId, cacheditem.id).catch(async err => {
+		// Log the error
+		guilded.logger.error(err);
+
+		// Fetch the list item and check if it exists
+		const item = await guilded.lists.fetch(listbridge.guilded.channelId, cacheditem.id);
+		if (!item) return;
+
+		// Create embed
+		const ItemEmbed = new EmbedBuilder()
+			.setColor(0x2f3136)
+			.setTitle(item.message)
+			.setTimestamp(Date.parse(item.updatedAt ?? item.createdAt));
+		if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);
+
+		// Re-send the mssage
+		const msg = await message.channel.send({ embeds: [ItemEmbed], components: [row] });
+		cacheditem.messageId = msg.id;
+		fs.writeFileSync(`./data/lists/${listbridge.guilded.channelId}.json`, JSON.stringify(json));
+		return;
+	});
 	json.items.splice(json.items.indexOf(cacheditem), 1);
 	fs.writeFileSync(`./data/lists/${listbridge.guilded.channelId}.json`, JSON.stringify(json));
 };
