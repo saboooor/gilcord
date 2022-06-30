@@ -16,10 +16,10 @@
   "author": "saboooor",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.0.0-dev.1656060492-e24970e",
+    "discord.js": "^14.0.0-dev.1656158629-c4653f9",
     "eslint": "^8.18.0",
     "fs": "^0.0.1-security",
-    "guilded.js": "^0.13.0",
+    "guilded.js": "^0.13.3",
     "winston": "^3.8.0",
     "yaml": "^2.1.1"
   },
