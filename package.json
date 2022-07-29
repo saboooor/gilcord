@@ -1,6 +1,6 @@
 {
   "name": "discord-guilded-bridge",
-  "version": "5.5.1",
+  "version": "5.5.2",
   "description": "a simple discord-guilded bridge",
   "repository": {
     "type": "git",
