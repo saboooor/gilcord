@@ -1,30 +1,30 @@
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
-const EmojisPattern = /(<a?)?(:\w+:)(\d{17,19})>/;
-const longTimePattern = /<t:(\d{1,13})(:t)?(:R)?>/;
-const longTimeWeekdayPattern = /<t:(\d{1,13}):F>/;
-const numericDateOnlyTimePattern = /<t:(\d{1,13}):d>/;
-const dateOnlyTimePattern = /<t:(\d{1,13}):D>/;
-const shortTimePattern = /<t:(\d{1,13}):t>/;
-const shortTimeSecondsPattern = /<t:(\d{1,13}):T>/;
+const EmojisPattern = /(<a?)?(:\w+:)(\d{17,19})>/g;
+const longTimePattern = /<t:(\d{1,13})(:t)?(:R)?>/g;
+const longTimeWeekdayPattern = /<t:(\d{1,13}):F>/g;
+const numericDateOnlyTimePattern = /<t:(\d{1,13}):d>/g;
+const dateOnlyTimePattern = /<t:(\d{1,13}):D>/g;
+const shortTimePattern = /<t:(\d{1,13}):t>/g;
+const shortTimeSecondsPattern = /<t:(\d{1,13}):T>/g;
 module.exports = function parseMentions(text, client, guild) {
 	let parsed = text;
 
 	// Parse all channel mentions
-	const channelMatches = [...text.matchAll(ChannelsPattern)];
+	const channelMatches = [...text.matchAll(new RegExp(ChannelsPattern, 'g'))];
 	channelMatches.forEach(match => {
 		const channel = client.channels.cache.get(match[1]);
 		parsed = parsed.replace(match[0], `**#${channel.name}**`);
 	});
 
 	// Parse all role mentions
-	const roleMatches = [...text.matchAll(RolesPattern)];
+	const roleMatches = [...text.matchAll(new RegExp(RolesPattern, 'g'))];
 	roleMatches.forEach(match => {
 		const role = guild.roles.cache.get(match[1]);
 		parsed = parsed.replace(match[0], `**@${role.name}**`);
 	});
 
 	// Parse all user mentions
-	const userMatches = [...text.matchAll(UsersPattern)];
+	const userMatches = [...text.matchAll(new RegExp(UsersPattern, 'g'))];
 	userMatches.forEach(match => {
 		const user = client.users.cache.get(match[1]);
 		parsed = parsed.replace(match[0], `**@${user.tag}**`);
