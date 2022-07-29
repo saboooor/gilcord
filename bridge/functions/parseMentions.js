@@ -1,11 +1,11 @@
 const { MessageMentions: { ChannelsPattern, RolesPattern, UsersPattern } } = require('discord.js');
-const EmojisPattern = /(<a?)?(:\w+:)(\d{17,19})>/g;
-const longTimePattern = /<t:(\d{1,13})(:t)?(:R)?>/g;
-const longTimeWeekdayPattern = /<t:(\d{1,13}):F>/g;
-const numericDateOnlyTimePattern = /<t:(\d{1,13}):d>/g;
-const dateOnlyTimePattern = /<t:(\d{1,13}):D>/g;
-const shortTimePattern = /<t:(\d{1,13}):t>/g;
-const shortTimeSecondsPattern = /<t:(\d{1,13}):T>/g;
+const EmojisPattern = /(<a?)?(:\w+:)(\d{17,19})>/;
+const longTimePattern = /<t:(\d{1,13})(:t)?(:R)?>/;
+const longTimeWeekdayPattern = /<t:(\d{1,13}):F>/;
+const numericDateOnlyTimePattern = /<t:(\d{1,13}):d>/;
+const dateOnlyTimePattern = /<t:(\d{1,13}):D>/;
+const shortTimePattern = /<t:(\d{1,13}):t>/;
+const shortTimeSecondsPattern = /<t:(\d{1,13}):T>/;
 module.exports = function parseMentions(text, client, guild) {
 	let parsed = text;
 
