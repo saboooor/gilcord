@@ -6,9 +6,10 @@ module.exports = client => {
 	client.date = date;
 	client.logger = createLogger({
 		format: format.combine(
+			format.errors({ stack: true }),
 			format.colorize(),
 			format.timestamp(),
-			format.printf(log => `[${log.timestamp.split('T')[1].split('.')[0]} ${client.type.color}${client.type.name} ${log.level}]: ${log.message}`),
+			format.printf(log => `[${log.timestamp.split('T')[1].split('.')[0]} ${client.type.color}${client.type.name} ${log.level}]: ${log.message}${log.stack ? `\n${log.stack}` : ''}`),
 		),
 		transports: [
 			new transports.Console(),
