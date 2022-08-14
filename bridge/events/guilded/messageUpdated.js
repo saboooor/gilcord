@@ -7,7 +7,7 @@ module.exports = async (discord, guilded, config, newmsg) => {
 	const bridge = srv.channels.find(b => b.guilded.channelId == newmsg.channelId);
 	if (!bridge) return;
 
-	// Get the cached message and check if it exists	const json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+	// Get the cached message and check if it exist
 	const json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
 	const cachedMessage = json.find(m => m.guilded == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromGuilded) return;
