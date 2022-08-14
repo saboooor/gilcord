@@ -82,7 +82,7 @@ module.exports = async (discord, guilded, config, message) => {
 	if (config.message_cache.timeout) {
 		await sleep(config.message_cache.timeout * 1000);
 		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(obj)}`);
-		json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
+		json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
 		json.splice(json.indexOf(obj), 1);
 		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 	}
