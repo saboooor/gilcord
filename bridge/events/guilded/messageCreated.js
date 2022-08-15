@@ -32,7 +32,7 @@ module.exports = async (discord, guilded, config, message) => {
 				const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: json.find(m => m.guilded == replyId).discord, limit: 1 })).first();
 				if (replyMsg && replyMsg.author.id != (bridge.discord.webhook ? bridge : srv).discord.webhook.id) {
 					replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
-					break;
+					continue;
 				}
 			}
 			const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(err => guilded.logger.error(err));
