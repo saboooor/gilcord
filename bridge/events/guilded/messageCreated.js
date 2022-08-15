@@ -30,16 +30,17 @@ module.exports = async (discord, guilded, config, message) => {
 		for (const replyId of message.replyMessageIds) {
 			if (json.find(m => m.guilded == replyId)) {
 				const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: json.find(m => m.guilded == replyId).discord, limit: 1 })).first();
-				if (replyMsg) replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
+				if (replyMsg && replyMsg.author.id != (bridge.discord.webhook ? bridge : srv).discord.webhook.id) {
+					replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
+					break;
+				}
 			}
-			else {
-				const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(err => guilded.logger.error(err));
-				if (!replyMsg) return;
-				replyMsg.member = guilded.members.cache.get(`${replyMsg.serverId}:${replyMsg.createdById}`);
-				if (!replyMsg.member) replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(err => guilded.logger.error(err));
-				if (!replyMsg.member) replyMsg.member = { user: { name: replyMsg.createdById } };
-				replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content}\``);
-			}
+			const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(err => guilded.logger.error(err));
+			if (!replyMsg) return;
+			replyMsg.member = guilded.members.cache.get(`${replyMsg.serverId}:${replyMsg.createdById}`);
+			if (!replyMsg.member) replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(err => guilded.logger.error(err));
+			if (!replyMsg.member) replyMsg.member = { user: { name: replyMsg.createdById } };
+			replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content}\``);
 		}
 	}
 	if (replies[0]) message.content = `${replies.join('\n')}\n\n${message.content}`;
