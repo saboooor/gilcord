@@ -58,7 +58,7 @@ module.exports = async (discord, guilded, config, message) => {
 		embeds: message.raw.embeds,
 	};
 	if (config.debug) discord.logger.info(`Message created from Guilded: ${JSON.stringify(webhookopt)}`);
-	const discordmsg = bridge.discord.webhook ? await bridge.discord.webhook.send(webhookopt) : await srv.discord.webhook.send(webhookopt);
+	const discordmsg = await (bridge.discord.webhook ? bridge : srv).discord.webhook.send(webhookopt);
 
 	// Cache the message for editing and deleting
 	if (!config.message_cache || !config.message_cache.enabled) return;
