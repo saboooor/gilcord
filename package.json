@@ -17,10 +17,10 @@
   "license": "MIT",
   "dependencies": {
     "discord.js": "^14.3.0",
-    "eslint": "^8.23.0",
+    "eslint": "^8.23.1",
     "fs": "^0.0.1-security",
     "guilded.js": "^0.13.13",
-    "winston": "^3.8.1",
+    "winston": "^3.8.2",
     "yaml": "^2.1.1"
   },
   "bugs": {
