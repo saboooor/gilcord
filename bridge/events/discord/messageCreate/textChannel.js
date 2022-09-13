@@ -13,7 +13,7 @@ module.exports = async (discord, guilded, config, message) => {
 	if (!bridge) return;
 
 	// Check if the message is by the bot or webhook
-	if (message.author.id == discord.user.id || (srv.discord.webhook && message.webhookId == srv.discord.webhook.id) || (bridge.discord.webhook && message.webhookId == bridge.discord.webhook.id)) return;
+	if (message.author.id == discord.user.id || (bridge.discord.webhook && message.webhookId == bridge.discord.webhook.id)) return;
 
 	// Check if the author is a bot and if the bot is allowed to send messages
 	if (message.author.bot && bridge.exempt_bots) return;

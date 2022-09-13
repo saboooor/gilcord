@@ -30,7 +30,7 @@ module.exports = async (discord, guilded, config, message) => {
 		for (const replyId of message.replyMessageIds) {
 			if (json.find(m => m.guilded == replyId)) {
 				const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: json.find(m => m.guilded == replyId).discord, limit: 1 })).first();
-				if (replyMsg && replyMsg.author.id != (bridge.discord.webhook ? bridge : srv).discord.webhook.id) {
+				if (replyMsg && replyMsg.author.id != bridge.discord.webhook.id) {
 					replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
 					continue;
 				}
@@ -45,9 +45,6 @@ module.exports = async (discord, guilded, config, message) => {
 	}
 	if (replies[0]) message.content = `${replies.join('\n')}\n\n${message.content}`;
 
-	// Change the webhook channel to the bridge's channel
-	if (srv.discord.webhook && srv.discord.webhook.channel != bridge.discord.channelId) await srv.discord.webhook.edit({ channel: bridge.discord.channelId });
-
 	// Get the nameformat from the configs
 	const nameformat = (bridge.discord.nameformat ?? srv.discord.nameformat ?? config.discord.nameformat).replace(/{name}/g, message.member.user.name);
 
@@ -59,7 +56,7 @@ module.exports = async (discord, guilded, config, message) => {
 		embeds: message.raw.embeds,
 	};
 	if (config.debug) discord.logger.info(`Message created from Guilded: ${JSON.stringify(webhookopt)}`);
-	const discordmsg = await (bridge.discord.webhook ? bridge : srv).discord.webhook.send(webhookopt);
+	const discordmsg = await bridge.discord.webhook.send(webhookopt);
 
 	// Cache the message for editing and deleting
 	if (!config.message_cache || !config.message_cache.enabled) return;
