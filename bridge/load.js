@@ -18,35 +18,49 @@ module.exports = async (discord, guilded, config) => {
 		const guilserver = await guilded.servers.fetch(srv.guilded.serverId).catch(err => guilded.logger.error(err));
 		if (!guilserver) return guilded.logger.error(`The Guilded serverId ${srv.guilded.serverId} doesn't exist!`);
 
-		// Fetch the Discord server's webhooks
-		const discwebhooks = (await discserver.fetchWebhooks()).filter(w => w.owner.id == discord.user.id);
-		for (const bridge of srv.channels) {
-			// Get the channel and check if it exists
-			const channel = discserver.channels.cache.get(bridge.discord.channelId);
-			if (!channel) {
-				discord.logger.error(`${discserver.name}'s Discord channelId ${bridge.discord.channelId} doesn't exist!`);
-				continue;
-			}
+		// Load text config
+		if (srv.channels) {
+			// Create messages folder in data
+			if (!fs.existsSync('./data/messages')) fs.mkdirSync('./data/messages');
 
-			// Get the channel's webhook
-			let discwebhook = discwebhooks.find(w => w.channelId == bridge.discord.channelId);
+			// Fetch the Discord server's webhooks
+			const discwebhooks = (await discserver.fetchWebhooks()).filter(w => w.owner.id == discord.user.id);
+			for (const bridge of srv.channels) {
+				// Create json files for data
+				if (config.message_cache && config.message_cache.enabled && !config.message_cache.timeout && !config.message_cache.max_messages && !fs.existsSync(`./data/messages/${bridge.guilded.channelId}.json`)) {
+					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
+				}
+				else {
+					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
+				}
 
-			// If the webhook doesn't exist, create it
-			if (!discwebhook) {
-				discwebhook = await channel.createWebhook({ name: 'Guilded-Discord Bridge', reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
-				if (!discwebhook) {
-					discord.logger.error(`${discserver.name}'s #${channel.name} Webhook couldn't be created!`);
+				// Get the channel and check if it exists
+				const channel = discserver.channels.cache.get(bridge.discord.channelId);
+				if (!channel) {
+					discord.logger.error(`${discserver.name}'s Discord channelId ${bridge.discord.channelId} doesn't exist!`);
 					continue;
 				}
-				discord.logger.warn(`${discserver.name}'s #${channel.name} Webhook wasn't found, so it was created.`);
+
+				// Get the channel's webhook
+				let discwebhook = discwebhooks.find(w => w.channelId == bridge.discord.channelId);
+
+				// If the webhook doesn't exist, create it
+				if (!discwebhook) {
+					discwebhook = await channel.createWebhook({ name: 'Guilded-Discord Bridge', reason: 'Webhook for Guilded-Discord Bridge' }).catch(err => discord.logger.error(err));
+					if (!discwebhook) {
+						discord.logger.error(`${discserver.name}'s #${channel.name} webhook wasn't found, and couldn't be created!`);
+						continue;
+					}
+					discord.logger.warn(`${discserver.name}'s #${channel.name} webhook wasn't found, so it was created.`);
+				}
+
+				// Inject the webhook into the channel's object
+				bridge.discord.webhook = discwebhook;
 			}
 
-			// Inject the webhook into the channel's object
-			bridge.discord.webhook = discwebhook;
+			// Log
+			discord.logger.info(`${discserver.name}'s text channel bridges have been loaded!`);
 		}
-
-		// Log
-		discord.logger.info(`Loaded ${discserver.name}'s webhooks`);
 
 		// Load list config
 		if (srv.lists) {
@@ -92,6 +106,9 @@ module.exports = async (discord, guilded, config) => {
 					fs.writeFileSync(`./data/lists/${list.guilded.channelId}.json`, JSON.stringify(json));
 				}
 			}
+
+			// Log
+			discord.logger.info(`${discserver.name}'s list channel bridges have been loaded!`);
 		}
 
 		// Load doc config
@@ -134,19 +151,9 @@ module.exports = async (discord, guilded, config) => {
 					fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, JSON.stringify(json));
 				}
 			}
-		}
 
-		// Load text config
-		if (srv.channels) {
-			if (!fs.existsSync('./data/messages')) fs.mkdirSync('./data/messages');
-			for (const bridge of srv.channels) {
-				if (config.message_cache && config.message_cache.enabled && !config.message_cache.timeout && !config.message_cache.max_messages && !fs.existsSync(`./data/messages/${bridge.guilded.channelId}.json`)) {
-					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
-				}
-				else {
-					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
-				}
-			}
+			// Log
+			discord.logger.info(`${discserver.name}'s doc channel bridges have been loaded!`);
 		}
 	}
 
