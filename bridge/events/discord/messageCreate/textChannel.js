@@ -22,8 +22,8 @@ module.exports = async (discord, guilded, config, message) => {
 	let json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 
 	// Parse all mentions on message content and embeds (literally can't find a better way to do the embed part)
-	message.content = parseMentions(message.content, discord, message.guild);
-	parseInEmbed(message.embeds, discord, message.guild);
+	message.content = await parseMentions(message.content, discord, message.guild);
+	await parseInEmbed(message.embeds, discord, message.guild);
 
 	// Parse all replies in the message
 	let reply, replyMessageIds;
@@ -65,8 +65,8 @@ module.exports = async (discord, guilded, config, message) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
 	// Send the message	to the guilded server
-	if (config.debug) guilded.logger.info(`Message create from Discord: ${JSON.stringify({ content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds[0] ? [message.embeds[0]] : undefined, replyMessageIds })}`);
-	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds[0] ? [message.embeds[0]] : undefined, replyMessageIds });
+	if (config.debug) guilded.logger.info(`Message create from Discord: ${JSON.stringify({ content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds.length ? message.embeds : undefined, replyMessageIds })}`);
+	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, { content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds.length ? message.embeds : undefined, replyMessageIds });
 
 	// Cache the message for editing and deleting
 	if (!config.message_cache || !config.message_cache.enabled) return;

@@ -15,8 +15,8 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	const cachedMessage = json.find(m => m.discord == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromDiscord) return;
 
-	newmsg.content = parseMentions(newmsg.content, discord, newmsg.guild);
-	parseInEmbed(newmsg.embeds, discord, newmsg.guild);
+	newmsg.content = await parseMentions(newmsg.content, discord, newmsg.guild);
+	await parseInEmbed(newmsg.embeds, discord, newmsg.guild);
 
 	// Parse all replies in the message
 	let reply;
