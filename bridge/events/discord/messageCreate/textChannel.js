@@ -26,10 +26,15 @@ module.exports = async (discord, guilded, config, message) => {
 	await parseInEmbed(message.embeds, discord, message.guild);
 
 	// Parse all replies in the message
-	let reply;
+	let reply, replyMessageIds;
 	if (message.reference && message.reference.messageId) {
-		const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(message.reference.messageId);
-		if (replyMsg) reply = `**${replyMsg.author.tag}** \`${(await parseMentions(replyMsg.content, discord, message.guild)).replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
+		if (json.find(m => m.discord == message.reference.messageId)) {
+			replyMessageIds = [json.find(m => m.discord == message.reference.messageId).guilded];
+		}
+		else {
+			const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: message.reference.messageId, limit: 1 })).first();
+			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${parseMentions(replyMsg.content, discord, message.guild)}\``;
+		}
 	}
 
 	// Add an embed if the message is a sticker
@@ -59,9 +64,10 @@ module.exports = async (discord, guilded, config, message) => {
 	// Get the nameformat from the configs
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
-	// Send the message	to the discord server
-	if (config.debug) guilded.logger.info(`Message created from Discord: ${reply ? `${reply}\n\n` : ''}${nameformat}${message.content}`);
-	const guildedmsg = await bridge.guilded.webhook.send(`${reply ? `${reply}\n\n` : ''}${nameformat}${message.content}`);
+	// Send the message	to the guilded server
+	const msg = { content: `${reply ? reply : ''}\n${nameformat}${message.content}`, embeds: message.embeds.length ? message.embeds : undefined, replyMessageIds };
+	if (config.debug) guilded.logger.info(`Message create from Discord: ${JSON.stringify(msg)}`);
+	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, msg);
 
 	// Cache the message for editing and deleting
 	if (!config.message_cache || !config.message_cache.enabled) return;
