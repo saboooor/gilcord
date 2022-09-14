@@ -21,7 +21,7 @@ Bridges chat channels between discord and guilded servers
 - Message stickers
 - Multi-server
 - Parses all mentions, timestamps, and emojis (if the emoji with the same name exists)
-- Webhooks on discord side (guilded soon when avatar/name is editable)
+- Webhooks on discord side (guilded soon if they add editing)
 
 # Known Issues:
 - Messages with images on Guilded have an ! in them
