@@ -14,10 +14,6 @@ module.exports = async (discord, guilded, config) => {
 		const discserver = await discord.guilds.fetch(srv.discord.serverId).catch(err => discord.logger.error(err));
 		if (!discserver) return discord.logger.error(`The Discord serverId ${srv.discord.serverId} doesn't exist!`);
 
-		// Get the guilded server and check if it exists
-		const guilserver = await guilded.servers.fetch(srv.guilded.serverId).catch(err => guilded.logger.error(err));
-		if (!guilserver) return guilded.logger.error(`The Guilded serverId ${srv.guilded.serverId} doesn't exist!`);
-
 		// Load text config
 		if (srv.channels) {
 			// Create messages folder in data
@@ -27,10 +23,7 @@ module.exports = async (discord, guilded, config) => {
 			const discwebhooks = (await discserver.fetchWebhooks()).filter(w => w.owner.id == discord.user.id);
 			for (const bridge of srv.channels) {
 				// Create json files for data
-				if (config.message_cache && config.message_cache.enabled && !config.message_cache.timeout && !config.message_cache.max_messages && !fs.existsSync(`./data/messages/${bridge.guilded.channelId}.json`)) {
-					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
-				}
-				else {
+				if (config.message_cache && config.message_cache.enabled && !fs.existsSync(`./data/messages/${bridge.guilded.channelId}.json`)) {
 					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
 				}
 
