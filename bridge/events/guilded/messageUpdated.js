@@ -17,7 +17,7 @@ module.exports = async (discord, guilded, config, newmsg) => {
 	if (newmsg.replyMessageIds[0]) {
 		for (const replyId of newmsg.replyMessageIds) {
 			if (json.find(m => m.guilded == replyId)) {
-				const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: json.find(m => m.guilded == replyId).discord, limit: 1 })).first();
+				const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(json.find(m => m.guilded == replyId).discord);
 				if (replyMsg) replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
 			}
 			else {

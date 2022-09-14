@@ -1,4 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { WebhookClient } = require('guilded.js');
 const fs = require('fs');
 module.exports = async (discord, guilded, config) => {
 	// Create data folders if they don't exist
@@ -47,7 +48,7 @@ module.exports = async (discord, guilded, config) => {
 				}
 
 				// Inject the webhook into the channel's object
-				bridge.guilded.webhook = guilwebhook;
+				bridge.guilded.webhook = new WebhookClient({ id: guilwebhook.id, token: guilwebhook.token });
 
 				// Get the Discord channel and check if it exists
 				const discchannel = await discserver.channels.fetch(bridge.discord.channelId).catch(() => { return undefined; });

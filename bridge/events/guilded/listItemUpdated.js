@@ -15,7 +15,7 @@ module.exports = async (discord, guilded, config, item) => {
 
 	// Get channel and message
 	const channel = discord.channels.cache.get(listbridge.discord.channelId);
-	const message = (await channel.messages.fetch({ around: cacheditem.messageId, limit: 1 })).first();
+	const message = await channel.messages.fetch(cacheditem.messageId);
 
 	// Create Embed with item info
 	const ItemEmbed = new EmbedBuilder(message.embeds[0].toJSON())

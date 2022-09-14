@@ -22,8 +22,8 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	let reply;
 	if (newmsg.reference && newmsg.reference.messageId) {
 		if (!json.find(m => m.discord == newmsg.reference.messageId)) {
-			const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: newmsg.reference.messageId, limit: 1 })).first();
-			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${parseMentions(replyMsg.content, discord, newmsg.guild)}\``;
+			const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(newmsg.reference.messageId);
+			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${await parseMentions(replyMsg.content, discord, newmsg.guild)}\``;
 		}
 	}
 

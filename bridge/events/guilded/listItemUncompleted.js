@@ -15,7 +15,7 @@ module.exports = async (discord, guilded, config, item) => {
 
 	// Get channel and message
 	const channel = discord.channels.cache.get(listbridge.discord.channelId);
-	const message = (await channel.messages.fetch({ around: cacheditem.messageId, limit: 1 })).first();
+	const message = await channel.messages.fetch(cacheditem.messageId);
 
 	// Create row with button to uncomplete
 	const row = new ActionRowBuilder()

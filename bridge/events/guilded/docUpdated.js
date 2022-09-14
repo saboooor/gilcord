@@ -15,7 +15,7 @@ module.exports = async (discord, guilded, config, doc) => {
 
 	// Get channel and message
 	const channel = discord.channels.cache.get(docbridge.discord.channelId);
-	const message = (await channel.messages.fetch({ around: cacheddoc.messageId, limit: 1 })).first();
+	const message = await channel.messages.fetch(cacheddoc.messageId);
 
 	// Create Embed with doc info
 	const docEmbed = new EmbedBuilder(message.embeds[0].toJSON())
