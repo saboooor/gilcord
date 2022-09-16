@@ -31,7 +31,7 @@ module.exports = async (discord, guilded, config, message) => {
 			if (json.find(m => m.guilded == replyId)) {
 				const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(json.find(m => m.guilded == replyId).discord);
 				if (replyMsg && replyMsg.author.id != bridge.discord.webhook.id) {
-					replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
+					replies.push(`${replyMsg.author} \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 					continue;
 				}
 			}
@@ -43,7 +43,7 @@ module.exports = async (discord, guilded, config, message) => {
 			replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 		}
 	}
-	if (replies[0]) message.content = `${replies.join('\n')}\n\n${message.content}`;
+	if (replies.length) message.content = `${replies.join('\n')}\n\n${message.content}`;
 
 	// Get the nameformat from the configs
 	const nameformat = (bridge.discord.nameformat ?? srv.discord.nameformat ?? config.discord.nameformat).replace(/{name}/g, message.member.user.name);

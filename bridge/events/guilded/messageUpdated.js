@@ -18,7 +18,7 @@ module.exports = async (discord, guilded, config, newmsg) => {
 		for (const replyId of newmsg.replyMessageIds) {
 			if (json.find(m => m.guilded == replyId)) {
 				const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(json.find(m => m.guilded == replyId).discord);
-				if (replyMsg) replies.push(`${replyMsg.author} \`${replyMsg.content}\``);
+				if (replyMsg) replies.push(`${replyMsg.author} \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 			}
 			else {
 				const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(err => guilded.logger.error(err));
@@ -26,7 +26,7 @@ module.exports = async (discord, guilded, config, newmsg) => {
 				replyMsg.member = guilded.members.cache.get(`${replyMsg.serverId}:${replyMsg.createdById}`);
 				if (!replyMsg.member) replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(err => guilded.logger.error(err));
 				if (!replyMsg.member) replyMsg.member = { user: { name: replyMsg.createdById } };
-				replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content}\``);
+				replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 			}
 		}
 	}
