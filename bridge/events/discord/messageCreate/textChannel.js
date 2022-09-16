@@ -29,7 +29,8 @@ module.exports = async (discord, guilded, config, message) => {
 	let reply;
 	if (message.reference && message.reference.messageId) {
 		const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(message.reference.messageId);
-		if (replyMsg) reply = `**${replyMsg.author.tag}** \`${(await parseMentions(replyMsg.content, discord, message.guild)).replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
+		const replyContent = await parseMentions(replyMsg.content, discord, message.guild);
+		if (replyMsg) reply = `**${replyMsg.author.tag}** \`${replyContent.replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
 	}
 
 	// Add an embed if the message is a sticker
