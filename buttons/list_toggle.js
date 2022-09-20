@@ -2,9 +2,9 @@ module.exports = {
 	name: 'list_toggle',
 	async execute(discord, guilded, interaction, item) {
 		try {
-			// Defer the button and toggle the item completion state
+			// Toggle the item completion state and defer the button
+			await guilded.lists[item.completedAt ? 'uncomplete' : 'complete'](item.channelId, item.id);
 			await interaction.deferUpdate();
-			guilded.lists[item.completedAt ? 'uncomplete' : 'complete'](item.channelId, item.id);
 		}
 		catch (err) { discord.logger.error(err); }
 	},
