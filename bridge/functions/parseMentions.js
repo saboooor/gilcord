@@ -12,7 +12,7 @@ module.exports = async function parseMentions(text, client, guild) {
 	// Parse all channel mentions
 	const channelMatches = [...text.matchAll(new RegExp(ChannelsPattern, 'g'))];
 	for (const match of channelMatches) {
-		const channel = await client.channels.fetch(match[1]);
+		const channel = await client.channels.fetch(match[1]).catch(() => { return null; });
 		if (!channel) {
 			client.logger.warn(`Channel Id ${match[1]} wasn't found!`);
 			parsed = parsed.replace(match[0], '**#Unknown Channel**');
@@ -24,7 +24,7 @@ module.exports = async function parseMentions(text, client, guild) {
 	// Parse all role mentions
 	const roleMatches = [...text.matchAll(new RegExp(RolesPattern, 'g'))];
 	for (const match of roleMatches) {
-		const role = await guild.roles.fetch(match[1]);
+		const role = await guild.roles.fetch(match[1]).catch(() => { return null; });
 		if (!role) {
 			client.logger.warn(`Role Id ${match[1]} wasn't found!`);
 			parsed = parsed.replace(match[0], '**@Unknown Role**');
@@ -36,7 +36,7 @@ module.exports = async function parseMentions(text, client, guild) {
 	// Parse all user mentions
 	const userMatches = [...text.matchAll(new RegExp(UsersPattern, 'g'))];
 	for (const match of userMatches) {
-		const user = await client.users.fetch(match[1]);
+		const user = await client.users.fetch(match[1]).catch(() => { return null; });
 		if (!user) {
 			client.logger.warn(`User Id ${match[1]} wasn't found!`);
 			parsed = parsed.replace(match[0], '**@Unknown User**');
