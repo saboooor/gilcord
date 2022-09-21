@@ -16,7 +16,7 @@
   "author": "saboooor",
   "license": "MPL-2.0",
   "dependencies": {
-    "discord.js": "^14.3.0",
+    "discord.js": "^14.4.0-dev.1663675488-5048a3d.0",
     "eslint": "^8.23.1",
     "fs": "^0.0.1-security",
     "guilded.js": "^0.13.14",

@@ -22,7 +22,6 @@ module.exports = async (discord, guilded, config) => {
 			// Fetch the Discord server's webhooks
 			const discwebhooks = (await discserver.fetchWebhooks()).filter(w => w.owner.id == discord.user.id);
 			for (const bridge of srv.channels) {
-
 				// Create json files for data
 				if (config.message_cache && config.message_cache.enabled && !fs.existsSync(`./data/messages/${bridge.guilded.channelId}.json`)) {
 					fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, '[]');
@@ -69,43 +68,39 @@ module.exports = async (discord, guilded, config) => {
 			for (const list of srv.lists) {
 				if (!fs.existsSync(`./data/lists/${list.guilded.channelId}.json`)) fs.writeFileSync(`./data/lists/${list.guilded.channelId}.json`, '{}');
 				const guilchannel = await guilded.channels.fetch(list.guilded.channelId);
-				const discchannel = await discord.channels.cache.get(list.discord.channelId);
+				const discchannel = await discord.channels.fetch(list.discord.channelId);
 				const json = require(`../data/lists/${list.guilded.channelId}.json`);
-				if (!json.items) {
-					const items = await guilchannel.getItems();
-					json.items = [];
-					for (const item of items) {
-						let member = guilded.members.cache.get(`${item.serverId}:${item.createdBy}`);
-						if (!member) member = await guilded.members.fetch(item.serverId, item.createdBy).catch(err => guilded.logger.error(err));
+				if (json.items) continue;
+				const items = await guilchannel.getItems();
+				json.items = [];
+				for (const item of items) {
+					const ItemEmbed = new EmbedBuilder()
+						.setColor(0x2f3136)
+						.setTitle(item.message)
+						.setTimestamp(Date.parse(item.updatedAt ?? item.createdAt));
+					if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);
 
-						const ItemEmbed = new EmbedBuilder()
-							.setColor(0x2f3136)
-							.setTitle(item.message)
-							.setTimestamp(Date.parse(item.updatedAt ?? item.createdAt));
-						if (item.note && item.note.content) ItemEmbed.setDescription(item.note.content);
+					const row = new ActionRowBuilder()
+						.addComponents([
+							new ButtonBuilder()
+								.setEmoji({ name: '🔲' })
+								.setCustomId(`list_toggle_${item.id}`)
+								.setStyle(ButtonStyle.Secondary),
+							new ButtonBuilder()
+								.setEmoji({ name: '📝' })
+								.setCustomId(`list_note_${item.id}`)
+								.setStyle(ButtonStyle.Secondary),
+						]);
 
-						const row = new ActionRowBuilder()
-							.addComponents([
-								new ButtonBuilder()
-									.setEmoji({ name: '🔲' })
-									.setCustomId(`list_toggle_${item.id}`)
-									.setStyle(ButtonStyle.Secondary),
-								new ButtonBuilder()
-									.setEmoji({ name: '📝' })
-									.setCustomId(`list_note_${item.id}`)
-									.setStyle(ButtonStyle.Secondary),
-							]);
+					const msg = await discchannel.send({ embeds: [ItemEmbed], components: [row] });
 
-						const msg = await discchannel.send({ embeds: [ItemEmbed], components: [row] });
+					json.items.push({
+						id: item.id,
+						messageId: msg.id,
+					});
 
-						json.items.push({
-							id: item.id,
-							messageId: msg.id,
-						});
-
-					}
-					fs.writeFileSync(`./data/lists/${list.guilded.channelId}.json`, JSON.stringify(json));
 				}
+				fs.writeFileSync(`./data/lists/${list.guilded.channelId}.json`, JSON.stringify(json));
 			}
 
 			// Log
@@ -118,43 +113,87 @@ module.exports = async (discord, guilded, config) => {
 			for (const doclist of srv.docs) {
 				if (!fs.existsSync(`./data/docs/${doclist.guilded.channelId}.json`)) fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, '{}');
 				const guilchannel = await guilded.channels.fetch(doclist.guilded.channelId);
-				const discchannel = await discord.channels.cache.get(doclist.discord.channelId);
+				const discchannel = await discord.channels.fetch(doclist.discord.channelId);
 				const json = require(`../data/docs/${doclist.guilded.channelId}.json`);
-				if (!json.docs) {
-					const docs = await guilchannel.getDocs();
-					json.docs = [];
-					for (const doc of docs) {
-						let member = guilded.members.cache.get(`${doc.serverId}:${doc.createdBy}`);
-						if (!member) member = await guilded.members.fetch(doc.serverId, doc.createdBy).catch(err => guilded.logger.error(err));
+				if (json.docs) continue;
+				const docs = await guilchannel.getDocs();
+				json.docs = [];
+				for (const doc of docs) {
+					const docEmbed = new EmbedBuilder()
+						.setColor(0x2f3136)
+						.setTitle(doc.title)
+						.setDescription(doc.content)
+						.setTimestamp(Date.parse(doc.updatedAt ?? doc.createdAt));
 
-						const docEmbed = new EmbedBuilder()
-							.setColor(0x2f3136)
-							.setTitle(doc.title)
-							.setDescription(doc.content)
-							.setTimestamp(Date.parse(doc.updatedAt ?? doc.createdAt));
+					const row = new ActionRowBuilder()
+						.addComponents([
+							new ButtonBuilder()
+								.setEmoji({ name: '📝' })
+								.setCustomId(`doc_edit_${doc.id}`)
+								.setStyle(ButtonStyle.Secondary),
+						]);
 
-						const row = new ActionRowBuilder()
-							.addComponents([
-								new ButtonBuilder()
-									.setEmoji({ name: '📝' })
-									.setCustomId(`doc_edit_${doc.id}`)
-									.setStyle(ButtonStyle.Secondary),
-							]);
+					const msg = await discchannel.send({ embeds: [docEmbed], components: [row] });
 
-						const msg = await discchannel.send({ embeds: [docEmbed], components: [row] });
+					json.docs.push({
+						id: doc.id,
+						messageId: msg.id,
+					});
 
-						json.docs.push({
-							id: doc.id,
-							messageId: msg.id,
-						});
-
-					}
-					fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, JSON.stringify(json));
 				}
+				fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, JSON.stringify(json));
 			}
 
 			// Log
 			discord.logger.info(`${discserver.name}'s doc channel bridges have been loaded!`);
+		}
+
+		// Load forums config
+		if (srv.forums) {
+			if (!fs.existsSync('./data/forums')) fs.mkdirSync('./data/forums');
+			for (const forum of srv.forums) {
+				if (!fs.existsSync(`./data/forums/${forum.guilded.channelId}.json`)) fs.writeFileSync(`./data/forums/${forum.guilded.channelId}.json`, '{}');
+				const guilchannel = await guilded.channels.fetch(forum.guilded.channelId);
+				const discchannel = await discord.channels.fetch(forum.discord.channelId);
+				const json = require(`../data/forums/${forum.guilded.channelId}.json`);
+				if (json.topics) continue;
+				const topics = (await guilded.topics.getForumTopics(guilchannel.id)).forumTopics;
+				const threads = (await discchannel.threads.fetchActive()).threads;
+				json.topics = [];
+				for (const topicData of topics) {
+					const topic = (await guilded.topics.getForumTopic(guilchannel.id, topicData.id)).forumTopic;
+					const member = await guilded.members.fetch(topic.serverId, topic.createdBy).catch(err => guilded.logger.error(err));
+
+					const thread = await discchannel.threads.create({
+						name: topic.title,
+						message: {
+							content: `**Thread Author:** ${member.user.name}\n\n${topic.content}`,
+						},
+					});
+
+					json.topics.push({
+						id: topic.id,
+						threadId: thread.id,
+					});
+				}
+				for (const threadData of threads) {
+					const thread = threadData[1];
+					const member = await thread.guild.members.fetch(thread.ownerId);
+					const starterMessage = await thread.fetchStarterMessage();
+
+					const topic = await guilchannel.createTopic(thread.name, `**Topic Author:** ${member.user.tag}\n\n${starterMessage.content}`);
+
+					json.topics.push({
+						id: topic.id,
+						threadId: thread.id,
+					});
+				}
+				console.log(json.topics);
+				fs.writeFileSync(`./data/forums/${forum.guilded.channelId}.json`, JSON.stringify(json));
+			}
+
+			// Log
+			discord.logger.info(`${discserver.name}'s forum channel bridges have been loaded!`);
 		}
 	}
 
