@@ -6,8 +6,13 @@ const numericDateOnlyTimePattern = /<t:(\d{1,13}):d>/g;
 const dateOnlyTimePattern = /<t:(\d{1,13}):D>/g;
 const shortTimePattern = /<t:(\d{1,13}):t>/g;
 const shortTimeSecondsPattern = /<t:(\d{1,13}):T>/g;
+const urlPattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
 module.exports = async function parseMentions(text, client, guild) {
 	let parsed = text;
+
+	// Parse all URLs to hyperlink
+	const urlMatches = [...text.matchAll(urlPattern)];
+	for (const match of urlMatches) parsed = parsed.replace(match[0], `[${match[0]}](${match[0]})`);
 
 	// Parse all channel mentions
 	const channelMatches = [...text.matchAll(new RegExp(ChannelsPattern, 'g'))];
