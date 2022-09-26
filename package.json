@@ -16,10 +16,10 @@
   "author": "saboooor",
   "license": "MPL-2.0",
   "dependencies": {
-    "discord.js": "^14.4.0-dev.1663675488-5048a3d.0",
-    "eslint": "^8.23.1",
+    "discord.js": "^14.5.0",
+    "eslint": "^8.24.0",
     "fs": "^0.0.1-security",
-    "guilded.js": "^0.13.14",
+    "guilded.js": "^0.13.16",
     "winston": "^3.8.2",
     "yaml": "^2.1.1"
   },
