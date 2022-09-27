@@ -1,5 +1,5 @@
 const { ActivityType, SlashCommandBuilder } = require('discord.js');
-module.exports = async (discord, guilded, config) => {
+module.exports = async (discord, guilded) => {
 	// Set the activity on the discord client
 	if (config.discord.presence) {
 		if (config.discord.presence.activity) await discord.user.setPresence({ activities: [{ name: config.discord.presence.activity.name ?? 'https://github.com/saboooor/guilded-discord-bridge', type: ActivityType[config.discord.presence.activity.type ?? 'Watching'] }] });

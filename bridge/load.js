@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
-module.exports = async (discord, guilded, config) => {
+module.exports = async (discord, guilded) => {
 	// Create data folders if they don't exist
 	if (!fs.existsSync('./data')) fs.mkdirSync('./data');
 
@@ -135,11 +135,11 @@ module.exports = async (discord, guilded, config) => {
 
 					const msg = await discchannel.send({ embeds: [docEmbed], components: [row] });
 
+					// Push the doc in the json file
 					json.docs.push({
 						id: doc.id,
 						messageId: msg.id,
 					});
-
 				}
 				fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, JSON.stringify(json));
 			}
@@ -206,7 +206,7 @@ module.exports = async (discord, guilded, config) => {
 				const subfiles = fs.readdirSync(`./bridge/events/${client.type.name}/${file}`).filter(subfile => subfile.endsWith('.js'));
 				subfiles.forEach(subfile => {
 					const event = require(`./events/${client.type.name}/${file}/${subfile}`);
-					client.on(file, event.bind(null, discord, guilded, config));
+					client.on(file, event.bind(null, discord, guilded));
 					delete require.cache[require.resolve(`./events/${client.type.name}/${file}/${subfile}`)];
 					count++;
 				});
@@ -214,7 +214,7 @@ module.exports = async (discord, guilded, config) => {
 			}
 			const event = require(`./events/${client.type.name}/${file}`);
 			const eventName = file.split('.')[0];
-			client.on(eventName, event.bind(null, discord, guilded, config));
+			client.on(eventName, event.bind(null, discord, guilded));
 			delete require.cache[require.resolve(`./events/${client.type.name}/${file}`)];
 			count++;
 		});

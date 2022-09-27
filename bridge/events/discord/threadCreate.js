@@ -1,4 +1,4 @@
-module.exports = async (discord, guilded, config, channel) => {
+module.exports = async (discord, guilded, channel) => {
 	// Get the member from the ownerId
 	const member = channel.guild.members.cache.get(channel.ownerId);
 

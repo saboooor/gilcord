@@ -1,5 +1,5 @@
 const { InteractionType } = require('discord.js');
-module.exports = async (discord, guilded, config, interaction) => {
+module.exports = async (discord, guilded, interaction) => {
 	// Check if the interaction is autocomplete
 	if (interaction.type != InteractionType.ApplicationCommandAutocomplete) return;
 

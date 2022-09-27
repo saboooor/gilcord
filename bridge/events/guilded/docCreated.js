@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
-module.exports = async (discord, guilded, config, doc) => {
+module.exports = async (discord, guilded, doc) => {
 	// Check if doc was created by client
 	if (doc.createdBy == guilded.user.id) return;
 
@@ -24,7 +24,7 @@ module.exports = async (discord, guilded, config, doc) => {
 		.setDescription(doc.content)
 		.setTimestamp(Date.parse(doc.createdAt));
 
-	// Create row with button to complete
+	// Create row with button to edit
 	const row = new ActionRowBuilder()
 		.addComponents([
 			new ButtonBuilder()

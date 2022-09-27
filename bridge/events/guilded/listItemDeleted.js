@@ -1,4 +1,4 @@
-module.exports = async (discord, guilded, config, item) => {
+module.exports = async (discord, guilded, item) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == item.serverId);
 	if (!srv || !srv.lists) return;
