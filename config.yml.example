@@ -32,10 +32,10 @@ servers: # This is where you define the bridge servers
     # nameformat: ""
     channels: # This is the text channels to bridge
       - guilded: # This is the guilded side of the channel
-          channelId: "" # This is the guilded channel's id
+          channelId: "" # This is the guilded channel's id, this must be a text based channel
         # nameformat: ""
         discord: # This is the discord side of the channel
-          channelId: "" # This is the discord channel's id
+          channelId: "" # This is the discord channel's id, this must be a text based channel
       # exempt_bots: true # This will exempt bots from the bridge
     # You may add more channels with this format
     # - guilded:
@@ -47,9 +47,9 @@ servers: # This is where you define the bridge servers
     # # exempt_bots: true
     lists: # This is the list channels to bridge
       - guilded: # This is the guilded side of the channel
-          channelId: "" # This is the guilded channel's id
+          channelId: "" # This is the guilded channel's id, this must be a list channel
         discord: # This is the discord side of the channel
-          channelId: "" # This is the discord channel's id
+          channelId: "" # This is the discord channel's id, this must be a text based channel
           permission: "ManageMessages" # This is the permission required to be able to manage list items
           # You may find a list of permissions here: https://github.com/discordjs/discord-api-types/blob/main/payloads/common.ts#L10
     # You may add more channels with this format
@@ -60,9 +60,9 @@ servers: # This is where you define the bridge servers
     #     permission: ""
     docs: # This is the doc channels to bridge
       - guilded: # This is the guilded side of the channel
-          channelId: "" # This is the guilded channel's id
+          channelId: "" # This is the guilded channel's id, this must be a docs channel
         discord: # This is the discord side of the channel
-          channelId: "" # This is the discord channel's id
+          channelId: "" # This is the discord channel's id, this must be a forum channel
     # You may add more channels with this format
     # - guilded:
     #     channelId: ""
@@ -70,9 +70,9 @@ servers: # This is where you define the bridge servers
     #     channelId: ""
     forums: # This is the forum channels to bridge
       - guilded: # This is the guilded side of the channel
-          channelId: "" # This is the guilded channel's id
+          channelId: "" # This is the guilded channel's id, this must be a forum channel
         discord: # This is the discord side of the channel
-          channelId: "" # This is the discord channel's id
+          channelId: "" # This is the discord channel's id, this must be a forum channel
     # You may add more channels with this format
     # - guilded:
     #     channelId: ""

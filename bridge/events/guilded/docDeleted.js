@@ -1,3 +1,4 @@
+const fs = require('fs');
 module.exports = async (discord, guilded, doc) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == doc.serverId);
@@ -13,7 +14,11 @@ module.exports = async (discord, guilded, doc) => {
 	if (!cacheddoc) return;
 
 	// Get channel and delete the message from discord
-	const channel = discord.channels.cache.get(docbridge.discord.channelId);
+	const thread = discord.channels.cache.get(cacheddoc.threadId);
+
+	// Delete the thread from the channel and remove the cached doc
 	if (config.debug) discord.logger.info(`Doc delete from Guilded: ${JSON.stringify(cacheddoc)}`);
-	channel.messages.delete(cacheddoc.messageId).catch(err => discord.logger.error(err));
+	thread.delete().catch(err => discord.logger.error(err));
+	json.docs.splice(json.docs.indexOf(cacheddoc), 1);
+	fs.writeFileSync(`./data/docs/${docbridge.guilded.channelId}.json`, JSON.stringify(json));
 };

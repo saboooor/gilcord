@@ -1,4 +1,3 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
 module.exports = async (discord, guilded, doc) => {
 	// Check if doc was created by client
@@ -12,37 +11,22 @@ module.exports = async (discord, guilded, doc) => {
 	const docbridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
 	if (!docbridge) return;
 
-	// Get the doc author and check if it exists
-	doc.member = guilded.members.cache.get(`${doc.serverId}:${doc.createdBy}`);
-	if (!doc.member) doc.member = await guilded.members.fetch(doc.serverId, doc.createdBy).catch(err => guilded.logger.error(err));
-	if (!doc.member) return;
-
-	// Create Embed with document
-	const docEmbed = new EmbedBuilder()
-		.setColor(0x2f3136)
-		.setTitle(doc.title)
-		.setDescription(doc.content)
-		.setTimestamp(Date.parse(doc.createdAt));
-
-	// Create row with button to edit
-	const row = new ActionRowBuilder()
-		.addComponents([
-			new ButtonBuilder()
-				.setEmoji({ name: '📝' })
-				.setCustomId(`doc_edit_${doc.id}`)
-				.setStyle(ButtonStyle.Secondary),
-		]);
-
-	// Send message
+	// Get the Discord forum channel
 	const channel = discord.channels.cache.get(docbridge.discord.channelId);
-	if (config.debug) discord.logger.info(`Doc create from Guilded: ${JSON.stringify({ embeds: [docEmbed], components: [row] })}`);
-	const msg = await channel.send({ embeds: [docEmbed], components: [row] });
+
+	// Create the discord thread
+	const threadData = {
+		name: doc.title,
+		message: { content: doc.content },
+	};
+	if (config.debug) discord.logger.info(`Doc create from Guilded: ${JSON.stringify(threadData)}`);
+	const thread = await channel.threads.create(threadData);
 
 	// Push the doc in the json file
 	const json = require(`../../../data/docs/${doc.channelId}.json`);
 	json.docs.push({
 		id: doc.id,
-		messageId: msg.id,
+		threadId: thread.id,
 	});
 	fs.writeFileSync(`./data/docs/${docbridge.guilded.channelId}.json`, JSON.stringify(json));
 };

@@ -94,6 +94,7 @@ module.exports = async (discord, guilded) => {
 
 					const msg = await discchannel.send({ embeds: [ItemEmbed], components: [row] });
 
+					// Push the item in the json file
 					json.items.push({
 						id: item.id,
 						messageId: msg.id,
@@ -117,28 +118,31 @@ module.exports = async (discord, guilded) => {
 				const json = require(`../data/docs/${doclist.guilded.channelId}.json`);
 				if (json.docs) continue;
 				const docs = await guilchannel.getDocs();
+				const threads = (await discchannel.threads.fetchActive()).threads;
 				json.docs = [];
 				for (const doc of docs) {
-					const docEmbed = new EmbedBuilder()
-						.setColor(0x2f3136)
-						.setTitle(doc.title)
-						.setDescription(doc.content)
-						.setTimestamp(Date.parse(doc.updatedAt ?? doc.createdAt));
-
-					const row = new ActionRowBuilder()
-						.addComponents([
-							new ButtonBuilder()
-								.setEmoji({ name: '📝' })
-								.setCustomId(`doc_edit_${doc.id}`)
-								.setStyle(ButtonStyle.Secondary),
-						]);
-
-					const msg = await discchannel.send({ embeds: [docEmbed], components: [row] });
+					const thread = await discchannel.threads.create({
+						name: doc.title,
+						message: {
+							content: doc.content,
+						},
+					});
 
 					// Push the doc in the json file
 					json.docs.push({
 						id: doc.id,
-						messageId: msg.id,
+						threadId: thread.id,
+					});
+				}
+				for (const threadData of threads) {
+					const thread = threadData[1];
+					const starterMessage = await thread.fetchStarterMessage();
+					const doc = await guilded.docs.create(doclist.guilded.channelId, { title: thread.name, content: starterMessage.content });
+
+					// Push the doc in the json file
+					json.docs.push({
+						id: doc.id,
+						threadId: thread.id,
 					});
 				}
 				fs.writeFileSync(`./data/docs/${doclist.guilded.channelId}.json`, JSON.stringify(json));
@@ -171,6 +175,7 @@ module.exports = async (discord, guilded) => {
 						},
 					});
 
+					// Push the topic in the json file
 					json.topics.push({
 						id: topic.id,
 						threadId: thread.id,
@@ -183,6 +188,7 @@ module.exports = async (discord, guilded) => {
 
 					const topic = await guilchannel.createTopic(thread.name, `**Topic Author:** ${member.user.tag}\n\n${starterMessage.content}`);
 
+					// Push the topic in the json file
 					json.topics.push({
 						id: topic.id,
 						threadId: thread.id,
@@ -218,6 +224,6 @@ module.exports = async (discord, guilded) => {
 			delete require.cache[require.resolve(`./events/${client.type.name}/${file}`)];
 			count++;
 		});
-		client.logger.info(`${count} event listeners loaded`);
+		client.logger.info(`${count} ${client.type.name} event listeners loaded`);
 	});
 };
