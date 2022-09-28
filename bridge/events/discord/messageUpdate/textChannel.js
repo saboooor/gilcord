@@ -1,6 +1,7 @@
 const { Embed } = require('guilded.js');
 const parseMentions = require('../../../functions/parseMentions.js');
 const parseInEmbeds = require('../../../functions/parseInEmbeds.js');
+
 module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == newmsg.guild.id);

@@ -1,5 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } = require('discord.js');
 const fs = require('fs');
+
 module.exports = async (discord, guilded, message) => {
 	// Check if the message is by a bot
 	if (message.author.bot) return;

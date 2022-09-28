@@ -1,4 +1,5 @@
 const { InteractionType } = require('discord.js');
+
 module.exports = async (discord, guilded, interaction) => {
 	// Check if the interaction is a modal
 	if (interaction.type != InteractionType.ModalSubmit) return;

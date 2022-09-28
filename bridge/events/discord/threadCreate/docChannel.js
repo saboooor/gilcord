@@ -1,4 +1,5 @@
 const fs = require('fs');
+
 module.exports = async (discord, guilded, thread) => {
 	// Check if the thread is by the bot
 	if (thread.ownerId == discord.user.id) return;

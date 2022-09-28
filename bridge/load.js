@@ -1,5 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
+
 module.exports = async (discord, guilded) => {
 	// Create data folders if they don't exist
 	if (!fs.existsSync('./data')) fs.mkdirSync('./data');

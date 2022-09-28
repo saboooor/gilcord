@@ -1,4 +1,5 @@
 const { ActivityType, SlashCommandBuilder } = require('discord.js');
+
 module.exports = async (discord, guilded) => {
 	// Set the activity on the discord client
 	if (config.discord.presence) {

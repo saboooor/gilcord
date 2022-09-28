@@ -1,4 +1,5 @@
 const fs = require('fs');
+
 module.exports = async (discord, guilded, doc) => {
 	// Check if doc was created by client
 	if (doc.createdBy == guilded.user.id) return;

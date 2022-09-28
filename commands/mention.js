@@ -1,5 +1,6 @@
 const { SlashCommandStringOption } = require('discord.js');
 const { Embed } = require('guilded.js');
+
 module.exports = {
 	name: 'mention',
 	description: 'Mentions a user on the Guilded Server',

@@ -1,5 +1,6 @@
 const { PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
+
 module.exports = async (discord, guilded, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { Collection } = require('discord.js');
+
 module.exports = client => {
 	let count = 0;
 	client.modals = new Collection();

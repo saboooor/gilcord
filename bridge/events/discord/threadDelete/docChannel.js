@@ -1,4 +1,5 @@
 const fs = require('fs');
+
 module.exports = async (discord, guilded, thread) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == thread.guild.id);

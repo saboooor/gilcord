@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const parseMentions = require('./parseMentions.js');
+
 module.exports = async function parseInEmbeds(embeds, client, guild) {
 	for (const i in embeds) {
 		const embedJSON = embeds[i].toJSON();
