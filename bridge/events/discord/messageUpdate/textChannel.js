@@ -1,5 +1,5 @@
 const { Embed } = require('guilded.js');
-const parseMentions = require('../../../functions/parseMentions.js');
+const { parseDiscord } = require('../../../functions/parse.js');
 const parseInEmbeds = require('../../../functions/parseInEmbeds.js');
 
 module.exports = async (discord, guilded, oldmsg, newmsg) => {
@@ -16,7 +16,7 @@ module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	const cachedMessage = json.find(m => m.discord == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromDiscord) return;
 
-	newmsg.content = await parseMentions(newmsg.content, discord, newmsg.guild);
+	newmsg.content = await parseDiscord(newmsg.content, discord, newmsg.guild);
 	await parseInEmbeds(newmsg.embeds, discord, newmsg.guild);
 
 	// Parse all replies in the messages
@@ -24,7 +24,7 @@ module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	if (newmsg.reference && newmsg.reference.messageId) {
 		if (!json.find(m => m.discord == newmsg.reference.messageId)) {
 			const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(newmsg.reference.messageId);
-			const replyContent = await parseMentions(replyMsg.content, discord, newmsg.guild);
+			const replyContent = await parseDiscord(replyMsg.content, discord, newmsg.guild);
 			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${replyContent.replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
 		}
 	}
@@ -45,6 +45,6 @@ module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, newmsg.author.tag);
 
 	// Edit the message
-	if (config.debug) guilded.logger.info(`Message update from Discord: ${JSON.stringify({ content: `${reply ? reply : ''}\n${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined })}`);
-	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${reply ? reply : ''}\n${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
+	if (config.debug) guilded.logger.info(`Message update from Discord: ${JSON.stringify({ content: `${reply ? `${reply}\n` : ''}${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined })}`);
+	guilded.messages.update(bridge.guilded.channelId, cachedMessage.guilded, { content: `${reply ? `${reply}\n` : ''}${nameformat}${newmsg.content}`, embeds: newmsg.embeds[0] ? [newmsg.embeds[0]] : undefined });
 };

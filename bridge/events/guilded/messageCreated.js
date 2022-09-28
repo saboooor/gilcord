@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { parseGuilded } = require('../../functions/parse.js');
 const { UserType } = require('guilded.js');
 
 module.exports = async (discord, guilded, message) => {
@@ -23,6 +24,9 @@ module.exports = async (discord, guilded, message) => {
 
 	// Get cached messages
 	let json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
+
+	// Parse all mentions on message content
+	message.content = await parseGuilded(message.content);
 
 	// Parse all replies in the message
 	const replies = [];
