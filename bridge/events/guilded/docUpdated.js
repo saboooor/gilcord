@@ -1,4 +1,7 @@
 module.exports = async (discord, guilded, doc) => {
+	// Check if doc was created by client
+	if (doc.createdBy == guilded.user.id) return;
+
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == doc.serverId);
 	if (!srv || !srv.docs) return;
