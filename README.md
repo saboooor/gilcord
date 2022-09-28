@@ -11,6 +11,7 @@ Bridges chat channels between discord and guilded servers
 - Text-based (Text-based <> Text-based)
 - List (List <> Text-based)
 - Docs (Docs <> Forum)
+- Forums (Forum <> Forum)
 
 # Features:
 - Multi-server
@@ -32,6 +33,8 @@ Bridges chat channels between discord and guilded servers
   - Docs longer than 2000 messages will be split into multiple messages in thread (Unstable)
   - Two-way Editing (Only editable through discord if the doc was created on discord / API limitation)
   - Two-way Deleting
+- Forums Bridge:
+  - Not fully implemented yet
 
 # Known Issues:
 - Messages with images on Guilded have an ! in them
