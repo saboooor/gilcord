@@ -18,10 +18,13 @@ module.exports = async (discord, guilded, doc) => {
 	// Get channel and message
 	const thread = discord.channels.cache.get(cacheddoc.threadId);
 
+	// Split the doc content every 2048 characters
+	const docContent = doc.content.match(/.{1,2048}/g);
+
 	// Get the thread's initial message
 	const starterMessage = await thread.fetchStarterMessage();
 
-	if (config.debug) discord.logger.info(`Doc update from Guilded: ${JSON.stringify({ name: doc.title, content: doc.content })}`);
-	await starterMessage.edit({ content: doc.content });
+	if (config.debug) discord.logger.info(`Doc update from Guilded: ${JSON.stringify({ name: doc.title, content: docContent[0] })}`);
+	await starterMessage.edit({ content: docContent[0] });
 	await thread.edit({ name: doc.title });
 };
