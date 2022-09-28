@@ -152,56 +152,6 @@ module.exports = async (discord, guilded) => {
 			// Log
 			discord.logger.info(`${discserver.name}'s doc channel bridges have been loaded!`);
 		}
-
-		// Load forums config
-		if (srv.forums) {
-			if (!fs.existsSync('./data/forums')) fs.mkdirSync('./data/forums');
-			for (const forum of srv.forums) {
-				if (!fs.existsSync(`./data/forums/${forum.guilded.channelId}.json`)) fs.writeFileSync(`./data/forums/${forum.guilded.channelId}.json`, '{}');
-				const guilchannel = await guilded.channels.fetch(forum.guilded.channelId);
-				const discchannel = await discord.channels.fetch(forum.discord.channelId);
-				const json = require(`../data/forums/${forum.guilded.channelId}.json`);
-				if (json.topics) continue;
-				const topics = (await guilded.topics.getForumTopics(guilchannel.id)).forumTopics;
-				const threads = (await discchannel.threads.fetchActive()).threads;
-				json.topics = [];
-				for (const topicData of topics) {
-					const topic = (await guilded.topics.getForumTopic(guilchannel.id, topicData.id)).forumTopic;
-					const member = await guilded.members.fetch(topic.serverId, topic.createdBy).catch(err => guilded.logger.error(err));
-
-					const thread = await discchannel.threads.create({
-						name: topic.title,
-						message: {
-							content: `**Thread Author:** ${member.user.name}\n\n${topic.content}`,
-						},
-					});
-
-					// Push the topic in the json file
-					json.topics.push({
-						id: topic.id,
-						threadId: thread.id,
-					});
-				}
-				for (const threadData of threads) {
-					const thread = threadData[1];
-					const member = await thread.guild.members.fetch(thread.ownerId);
-					const starterMessage = await thread.fetchStarterMessage();
-
-					const topic = await guilchannel.createTopic(thread.name, `**Topic Author:** ${member.user.tag}\n\n${starterMessage.content}`);
-
-					// Push the topic in the json file
-					json.topics.push({
-						id: topic.id,
-						threadId: thread.id,
-					});
-				}
-				console.log(json.topics);
-				fs.writeFileSync(`./data/forums/${forum.guilded.channelId}.json`, JSON.stringify(json));
-			}
-
-			// Log
-			discord.logger.info(`${discserver.name}'s forum channel bridges have been loaded!`);
-		}
 	}
 
 	// Load events
