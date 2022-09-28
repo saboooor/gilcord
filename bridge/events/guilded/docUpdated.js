@@ -18,8 +18,8 @@ module.exports = async (discord, guilded, doc) => {
 	// Get channel and message
 	const thread = discord.channels.cache.get(cacheddoc.threadId);
 
-	// Split the doc content every 2048 characters
-	const docContent = doc.content.match(/.{1,2048}/g);
+	// Split the doc content every 2000 characters
+	const docContent = doc.content.match(/.{1,2000}/g);
 
 	// Get the thread's initial message
 	const starterMessage = await thread.fetchStarterMessage();

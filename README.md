@@ -30,7 +30,7 @@ Bridges chat channels between discord and guilded servers
   - Permissions for who can delete and edit list items
 - Docs Bridge:
   - Based on Discord Forums
-  - Docs longer than 2048 messages will be split into multiple messages in thread (Unstable)
+  - Docs longer than 2000 messages will be split into multiple messages in thread (Unstable)
   - Two-way Editing (Only editable through discord if the doc was created on discord / API limitation)
   - Two-way Deleting
 - Forums Bridge:

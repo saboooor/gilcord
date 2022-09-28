@@ -15,10 +15,10 @@ module.exports = async (discord, guilded, doc) => {
 	// Get the Discord forum channel
 	const channel = discord.channels.cache.get(docbridge.discord.channelId);
 
-	// Split the doc content every 2048 characters
-	const docContent = doc.content.match(/.{1,2048}/g);
+	// Split the doc content every 2000 characters
+	const docContent = doc.content.match(/.{1,2000}/g);
 
-	// Make the thread data with the first chunk if original content is over 2048 characters
+	// Make the thread data with the first chunk if original content is over 2000 characters
 	const threadData = {
 		name: doc.title,
 		message: { content: docContent.shift() },
@@ -29,7 +29,7 @@ module.exports = async (discord, guilded, doc) => {
 	const thread = await channel.threads.create(threadData);
 
 	// Send the remaining chunks if available
-	if (docContent.length) discord.logger.info('Sending multiple messages to discord since the doc is over 2048 characters, please use with care as this is still an unstable feature!');
+	if (docContent.length) discord.logger.info('Sending multiple messages to discord since the doc is over 2000 characters, please use with care as this is still an unstable feature!');
 	for (const content of docContent) await thread.send({ content });
 
 	// Push the doc in the json file
