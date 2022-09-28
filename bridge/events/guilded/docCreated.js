@@ -29,7 +29,7 @@ module.exports = async (discord, guilded, doc) => {
 	const thread = await channel.threads.create(threadData);
 
 	// Send the remaining chunks if available
-	if (docContent.length) discord.logger.info('Sending multiple messages to discord since the doc is over 2000 characters, please use with care as this is still an unstable feature!');
+	if (docContent.length) discord.logger.warn('Sending multiple messages to discord since the doc is over 2000 characters, please use with care as this is still an unstable feature!');
 	for (const content of docContent) await thread.send({ content });
 
 	// Push the doc in the json file
