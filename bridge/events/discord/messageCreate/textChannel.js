@@ -1,5 +1,5 @@
 const fs = require('fs');
-const parseMentions = require('../../../functions/parseMentions.js');
+const { parseDiscord } = require('../../../functions/parse.js');
 const parseInEmbeds = require('../../../functions/parseInEmbeds.js');
 const { Embed } = require('guilded.js');
 
@@ -21,15 +21,15 @@ module.exports = async (discord, guilded, message) => {
 	// Get cached messages
 	let json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 
-	// Parse all mentions on message content and embeds (literally can't find a better way to do the embed part)
-	message.content = await parseMentions(message.content, discord, message.guild);
+	// Parse all mentions on message content and embeds
+	message.content = await parseDiscord(message.content, discord, message.guild);
 	await parseInEmbeds(message.embeds, discord, message.guild);
 
 	// Parse all replies in the message
 	let reply;
 	if (message.reference && message.reference.messageId) {
 		const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(message.reference.messageId);
-		const replyContent = await parseMentions(replyMsg.content, discord, message.guild);
+		const replyContent = await parseDiscord(replyMsg.content, discord, message.guild);
 		if (replyMsg) reply = `**${replyMsg.author.tag}** \`${replyContent.replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
 	}
 
@@ -60,9 +60,10 @@ module.exports = async (discord, guilded, message) => {
 	// Get the nameformat from the configs
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
-	// Send the message	to the discord server
-	if (config.debug) guilded.logger.info(`Message created from Discord: ${reply ? `${reply}\n\n` : ''}${nameformat}${message.content}`);
-	const guildedmsg = await bridge.guilded.webhook.send(`${reply ? `${reply}\n\n` : ''}${nameformat}${message.content}`);
+	// Send the message	to the guilded server
+	const msg = { content: `${reply ? `${reply}\n` : ''}${nameformat}${message.content}`, embeds: message.embeds.length ? message.embeds : undefined };
+	if (config.debug) guilded.logger.info(`Message create from Discord: ${JSON.stringify(msg)}`);
+	const guildedmsg = await bridge.guilded.webhook.send(msg);
 
 	// Cache the message for editing and deleting
 	if (!config.message_cache || !config.message_cache.enabled) return;
