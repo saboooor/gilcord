@@ -1,9 +1,9 @@
-function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const fs = require('fs');
 const parseMentions = require('../../../functions/parseMentions.js');
-const parseInEmbed = require('../../../functions/parseInEmbed.js');
+const parseInEmbeds = require('../../../functions/parseInEmbeds.js');
 const { Embed } = require('guilded.js');
-module.exports = async (discord, guilded, config, message) => {
+
+module.exports = async (discord, guilded, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == message.guild.id);
 	if (!srv) return;
@@ -23,7 +23,7 @@ module.exports = async (discord, guilded, config, message) => {
 
 	// Parse all mentions on message content and embeds (literally can't find a better way to do the embed part)
 	message.content = await parseMentions(message.content, discord, message.guild);
-	await parseInEmbed(message.embeds, discord, message.guild);
+	await parseInEmbeds(message.embeds, discord, message.guild);
 
 	// Parse all replies in the message
 	let reply;

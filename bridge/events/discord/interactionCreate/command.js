@@ -1,4 +1,4 @@
-module.exports = async (discord, guilded, config, interaction) => {
+module.exports = async (discord, guilded, interaction) => {
 	// Check if interaction is command
 	if (!interaction.isChatInputCommand()) return;
 

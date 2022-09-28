@@ -1,5 +1,7 @@
-const { EmbedBuilder } = require('discord.js');
-module.exports = async (discord, guilded, config, doc) => {
+module.exports = async (discord, guilded, doc) => {
+	// Check if doc was created by client
+	if (doc.createdBy == guilded.user.id) return;
+
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == doc.serverId);
 	if (!srv || !srv.docs) return;
@@ -14,16 +16,15 @@ module.exports = async (discord, guilded, config, doc) => {
 	if (!cacheddoc) return;
 
 	// Get channel and message
-	const channel = discord.channels.cache.get(docbridge.discord.channelId);
-	const message = await channel.messages.fetch(cacheddoc.messageId);
+	const thread = discord.channels.cache.get(cacheddoc.threadId);
 
-	// Create Embed with doc info
-	const docEmbed = new EmbedBuilder(message.embeds[0].toJSON())
-		.setColor(0x2f3136)
-		.setTitle(doc.title)
-		.setDescription(doc.content)
-		.setTimestamp(Date.parse(doc.updatedAt));
+	// Split the doc content every 2000 characters
+	const docContent = doc.content.match(/.{1,2000}/g);
 
-	if (config.debug) discord.logger.info(`Doc update from Guilded: ${JSON.stringify({ embeds: [docEmbed] })}`);
-	message.edit({ embeds: [docEmbed] });
+	// Get the thread's initial message
+	const starterMessage = await thread.fetchStarterMessage();
+
+	if (config.debug) discord.logger.info(`Doc update from Guilded: ${JSON.stringify({ name: doc.title, content: docContent[0] })}`);
+	await starterMessage.edit({ content: docContent[0] });
+	await thread.edit({ name: doc.title });
 };

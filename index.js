@@ -1,7 +1,7 @@
 // Parse the config
 const fs = require('fs');
 const YAML = require('yaml');
-const config = YAML.parse(fs.readFileSync('./config.yml', 'utf8'));
+global.config = YAML.parse(fs.readFileSync('./config.yml', 'utf8'));
 
 // Get libraries
 const D = require('discord.js');
@@ -37,5 +37,5 @@ guilded.type = { color: '\u001b[33m', name: 'guilded' };
 	}
 
 	// Load the bridge
-	require('./bridge/load.js')(discord, guilded, config);
+	require('./bridge/load.js')(discord, guilded);
 })();

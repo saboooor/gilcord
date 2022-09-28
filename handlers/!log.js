@@ -1,29 +1,34 @@
 const { createLogger, format, transports } = require('winston');
 const rn = new Date();
-const date = `${minTwoDigits(rn.getMonth() + 1)}-${minTwoDigits(rn.getDate())}-${rn.getFullYear()}`;
+const logDate = `${minTwoDigits(rn.getMonth() + 1)}-${minTwoDigits(rn.getDate())}-${rn.getFullYear()}`;
 function minTwoDigits(n) { return (n < 10 ? '0' : '') + n; }
 module.exports = client => {
-	client.date = date;
+	// Set the global vars
+	global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+	global.logDate = logDate;
+
+	// Create a logger
 	client.logger = createLogger({
 		format: format.combine(
 			format.errors({ stack: true }),
 			format.colorize(),
 			format.timestamp(),
-			format.printf(log => `[${log.timestamp.split('T')[1].split('.')[0]} ${client.type.color}${client.type.name} ${log.level}]: ${log.message}${log.stack ? `\n${log.stack}` : ''}`),
+			format.printf(log => `[${new Date(log.timestamp).toLocaleString('default', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })} ${client.type.color}${client.type.name} ${log.level}]: ${log.message}${log.stack ? `\n${log.stack}` : ''}`),
 		),
 		transports: [
 			new transports.Console(),
-			new transports.File({ filename: `logs/${date}.log` }),
+			new transports.File({ filename: `logs/${logDate}.log` }),
 		],
 		rejectionHandlers: [
 			new transports.Console(),
-			new transports.File({ filename: `logs/${date}.log` }),
+			new transports.File({ filename: `logs/${logDate}.log` }),
 		],
 	});
 	client.logger.info('Logger started');
+
+	// Register events for disconnect, reconnect, warn, and error
 	client.on('disconnect', () => client.logger.info('Bot is disconnecting...'));
 	client.on('reconnecting', () => client.logger.info('Bot reconnecting...'));
-	if (client.type.name == 'discord') client.rest.on('rateLimited', (info) => client.logger.warn(`Encountered ${info.method} rate limit!`));
 	client.on('warn', error => client.logger.warn(error));
 	client.on('error', error => client.logger.error(error));
 };

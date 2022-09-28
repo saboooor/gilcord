@@ -1,4 +1,5 @@
 const { ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle } = require('discord.js');
+
 module.exports = {
 	name: 'list_note',
 	async execute(discord, guilded, interaction, item) {

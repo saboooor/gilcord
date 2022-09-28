@@ -1,6 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const fs = require('fs');
-module.exports = async (discord, guilded, config, item) => {
+
+module.exports = async (discord, guilded, item) => {
 	// Check if list was created by client
 	if (item.createdBy == guilded.user.id) return;
 

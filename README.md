@@ -7,25 +7,37 @@
 
 Bridges chat channels between discord and guilded servers
 
-# Supported Channel types:
-- Text
-- List
-- Docs
+# Supported Channel types: (Guilded <> Discord)
+- Text-based (Text-based <> Text-based)
+- List (List <> Text-based)
+- Docs (Docs <> Forum)
+- Forums (Forum <> Forum)
 
 # Features:
-- Message editing
-- Message replies
-- Two-Way Message deleting
-- Message embeds
-- Message attachments
-- Message stickers
 - Multi-server
-- Parses all mentions, timestamps, and emojis (if the emoji with the same name exists)
-- Webhooks on discord side (guilded soon if they add editing)
+- Text-based Channel Bridge:
+  - Two-way Editing
+  - Two-way Replying
+  - Two-way Deleting
+  - Two-way Embeds
+  - Two-way Attachments
+  - Discord Stickers
+  - Parses Discord Mentions and Timestamps in messages and embeds
+  - Discord Webhooks (guilded soon if they let us edit webhook messages)
+- List Bridge:
+  - Based on Discord Embeds
+  - Buttons to edit/complete/uncomplete list items
+  - Permissions for who can delete and edit list items
+- Docs Bridge:
+  - Based on Discord Forums
+  - Docs longer than 2000 messages will be split into multiple messages in thread (Unstable)
+  - Two-way Editing (Only editable through discord if the doc was created on discord / API limitation)
+  - Two-way Deleting
+- Forums Bridge:
+  - Not fully implemented yet
 
 # Known Issues:
 - Messages with images on Guilded have an ! in them
-- List doesn't uncomplete (Library bug, use guilded's main branch to fix this)
 
 # Videos
 **Here's a video showing the bot's text bridge**

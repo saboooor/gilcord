@@ -1,7 +1,7 @@
-function sleep(ms) { return new Promise(res => setTimeout(res, ms)); }
 const fs = require('fs');
 const { UserType } = require('guilded.js');
-module.exports = async (discord, guilded, config, message) => {
+
+module.exports = async (discord, guilded, message) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == message.serverId);
 	if (!srv) return;

@@ -1,7 +1,8 @@
 const { Embed } = require('guilded.js');
-const parseMentions = require('../../functions/parseMentions.js');
-const parseInEmbed = require('../../functions/parseInEmbed.js');
-module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
+const parseMentions = require('../../../functions/parseMentions.js');
+const parseInEmbeds = require('../../../functions/parseInEmbeds.js');
+
+module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.discord.serverId == newmsg.guild.id);
 	if (!srv) return;
@@ -11,14 +12,14 @@ module.exports = async (discord, guilded, config, oldmsg, newmsg) => {
 	if (!bridge) return;
 
 	// Get the cached message and check if it exists
-	const json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
+	const json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 	const cachedMessage = json.find(m => m.discord == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromDiscord) return;
 
 	newmsg.content = await parseMentions(newmsg.content, discord, newmsg.guild);
-	await parseInEmbed(newmsg.embeds, discord, newmsg.guild);
+	await parseInEmbeds(newmsg.embeds, discord, newmsg.guild);
 
-	// Parse all replies in the message
+	// Parse all replies in the messages
 	let reply;
 	if (newmsg.reference && newmsg.reference.messageId) {
 		if (!json.find(m => m.discord == newmsg.reference.messageId)) {

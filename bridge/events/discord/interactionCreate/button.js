@@ -1,5 +1,6 @@
 const { PermissionsBitField } = require('discord.js');
-module.exports = async (discord, guilded, config, interaction) => {
+
+module.exports = async (discord, guilded, interaction) => {
 	// Check if the interaction is a button
 	if (!interaction.isButton()) return;
 
