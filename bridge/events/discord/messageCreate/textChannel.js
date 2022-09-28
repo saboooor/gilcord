@@ -26,11 +26,15 @@ module.exports = async (discord, guilded, message) => {
 	await parseInEmbeds(message.embeds, discord, message.guild);
 
 	// Parse all replies in the message
-	let reply;
+	let reply, replyMessageIds;
 	if (message.reference && message.reference.messageId) {
-		const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(message.reference.messageId);
-		const replyContent = await parseDiscord(replyMsg.content, discord, message.guild);
-		if (replyMsg) reply = `**${replyMsg.author.tag}** \`${replyContent.replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
+		if (json.find(m => m.discord == message.reference.messageId)) {
+			replyMessageIds = [json.find(m => m.discord == message.reference.messageId).guilded];
+		}
+		else {
+			const replyMsg = (await discord.channels.cache.get(bridge.discord.channelId).messages.fetch({ around: message.reference.messageId, limit: 1 })).first();
+			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${parseDiscord(replyMsg.content, discord, message.guild)}\``;
+		}
 	}
 
 	// Add an embed if the message is a sticker
@@ -61,9 +65,9 @@ module.exports = async (discord, guilded, message) => {
 	const nameformat = (bridge.guilded.nameformat ?? srv.guilded.nameformat ?? config.guilded.nameformat).replace(/{name}/g, message.author.tag);
 
 	// Send the message	to the guilded server
-	const msg = { content: `${reply ? `${reply}\n` : ''}${nameformat}${message.content}`, embeds: message.embeds.length ? message.embeds : undefined };
+	const msg = { content: `${reply ? `${reply}\n` : ''}${nameformat}${message.content}`, embeds: message.embeds.length ? message.embeds : undefined, replyMessageIds };
 	if (config.debug) guilded.logger.info(`Message create from Discord: ${JSON.stringify(msg)}`);
-	const guildedmsg = await bridge.guilded.webhook.send(msg);
+	const guildedmsg = await guilded.messages.send(bridge.guilded.channelId, msg);
 
 	// Cache the message for editing and deleting
 	if (!config.message_cache || !config.message_cache.enabled) return;

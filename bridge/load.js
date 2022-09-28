@@ -1,5 +1,4 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { WebhookClient } = require('guilded.js');
 const fs = require('fs');
 
 module.exports = async (discord, guilded) => {
@@ -35,20 +34,6 @@ module.exports = async (discord, guilded) => {
 					discord.logger.error(`${discserver.name}'s Guilded channelId ${bridge.guilded.channelId} doesn't exist!`);
 					continue;
 				}
-
-				// Get the Guilded channel's webhook
-				let guilwebhook = (await guilded.webhooks.getWebhooks(srv.guilded.serverId, bridge.guilded.channelId)).filter(w => w.authorID == guilded.user.id).first();
-				if (!guilwebhook) {
-					guilwebhook = await guilded.webhooks.createWebhook(srv.guilded.serverId, { name: 'Guilded-Discord Bridge', channelId: bridge.guilded.channelId }).catch(err => discord.logger.error(err));
-					if (!guilwebhook) {
-						discord.logger.error(`${discserver.name}'s #${guilchannel.name} webhook wasn't found, and couldn't be created!`);
-						continue;
-					}
-					discord.logger.warn(`${discserver.name}'s #${guilchannel.name} webhook wasn't found, so it was created.`);
-				}
-
-				// Inject the webhook into the channel's object
-				bridge.guilded.webhook = new WebhookClient({ id: guilwebhook.id, token: guilwebhook.token });
 
 				// Get the Discord channel and check if it exists
 				const discchannel = await discserver.channels.fetch(bridge.discord.channelId).catch(() => { return undefined; });
