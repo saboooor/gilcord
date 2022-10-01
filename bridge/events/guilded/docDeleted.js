@@ -6,20 +6,20 @@ module.exports = async (discord, guilded, doc) => {
 	if (!srv || !srv.docs) return;
 
 	// Get the channel config and check if it exists
-	const bridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
-	if (!bridge) return;
+	const docbridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
+	if (!docbridge) return;
 
 	// Get the cached document
-	const json = require(`../../../data/${srv.guilded.serverId}/docs/${bridge.guilded.channelId}.json`);
-	const cacheddoc = json.find(i => i.id == doc.id);
+	const json = require(`../../../data/docs/${doc.channelId}.json`);
+	const cacheddoc = json.docs.find(i => i.id == doc.id);
 	if (!cacheddoc) return;
 
 	// Get channel and delete the message from discord
-	const thread = await discord.channels.fetch(cacheddoc.threadId);
+	const thread = discord.channels.cache.get(cacheddoc.threadId);
 
 	// Delete the thread from the channel and remove the cached doc
 	if (config.debug) discord.logger.info(`Doc delete from Guilded: ${JSON.stringify(cacheddoc)}`);
 	thread.delete().catch(err => discord.logger.error(err));
-	json.splice(json.indexOf(cacheddoc), 1);
-	fs.writeFileSync(`./data/${srv.guilded.serverId}/docs/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	json.docs.splice(json.docs.indexOf(cacheddoc), 1);
+	fs.writeFileSync(`./data/docs/${docbridge.guilded.channelId}.json`, JSON.stringify(json));
 };

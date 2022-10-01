@@ -19,27 +19,27 @@ module.exports = async (discord, guilded, interaction) => {
 
 	// Set the target
 	let target;
-	if (split[0] == 'list' && srv.list) {
+	if (split[0] == 'list' && srv.lists) {
 		// Get the channel config and check if it exists
-		const bridge = srv.list.find(b => b.discord.channelId == interaction.channel.id);
-		if (!bridge) return;
+		const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
+		if (!listbridge) return;
 
 		// Check if member has the required permission
-		if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags[bridge.discord.permission])) return;
+		if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags[listbridge.discord.permission])) return;
 
 		// Fetch the list item
-		target = await guilded.lists.fetch(bridge.guilded.channelId, targetId);
+		target = await guilded.lists.fetch(listbridge.guilded.channelId, targetId);
 	}
 	else if (split[0] == 'doc' && srv.docs) {
 		// Get the channel config and check if it exists
-		const bridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
-		if (!bridge) return;
+		const docbridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
+		if (!docbridge) return;
 
 		// Check if member has the required permission
 		if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.ManageMessages)) return;
 
 		// Fetch the document
-		target = await guilded.docs.fetch(bridge.guilded.channelId, targetId);
+		target = await guilded.docs.fetch(docbridge.guilded.channelId, targetId);
 	}
 	if (!target) return;
 

@@ -8,11 +8,11 @@ module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	if (!srv) return;
 
 	// Get the channel config and check if it and the cached message exists
-	const bridge = srv.text.find(b => b.discord.channelId == newmsg.channel.id);
+	const bridge = srv.channels.find(b => b.discord.channelId == newmsg.channel.id);
 	if (!bridge) return;
 
 	// Get the cached message and check if it exists
-	const json = require(`../../../../data/${srv.guilded.serverId}/text/${bridge.guilded.channelId}.json`);
+	const json = require(`../../../../data/messages/${bridge.guilded.channelId}.json`);
 	const cachedMessage = json.find(m => m.discord == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromDiscord) return;
 
@@ -23,8 +23,7 @@ module.exports = async (discord, guilded, oldmsg, newmsg) => {
 	let reply;
 	if (newmsg.reference && newmsg.reference.messageId) {
 		if (!json.find(m => m.discord == newmsg.reference.messageId)) {
-			const discchannel = await discord.channels.fetch(bridge.discord.channelId);
-			const replyMsg = await discchannel.messages.fetch(newmsg.reference.messageId);
+			const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(newmsg.reference.messageId);
 			const replyContent = await parseDiscord(replyMsg.content, discord, newmsg.guild);
 			if (replyMsg) reply = `**${replyMsg.author.tag}** \`${replyContent.replace(/\n/g, ' ').replace(/`/g, '\'')}\``;
 		}

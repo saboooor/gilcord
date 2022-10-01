@@ -9,11 +9,11 @@ module.exports = async (discord, guilded, doc) => {
 	if (!srv || !srv.docs) return;
 
 	// Get the channel config and check if it exists
-	const bridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
-	if (!bridge) return;
+	const docbridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
+	if (!docbridge) return;
 
 	// Get the Discord forum channel
-	const channel = await discord.channels.fetch(bridge.discord.channelId);
+	const channel = discord.channels.cache.get(docbridge.discord.channelId);
 
 	// Split the doc content every 2000 characters
 	const docContent = doc.content.match(/.{1,2000}/g);
@@ -33,10 +33,10 @@ module.exports = async (discord, guilded, doc) => {
 	for (const content of docContent) await thread.send({ content });
 
 	// Push the doc in the json file
-	const json = require(`../../../data/${srv.guilded.serverId}/docs/${bridge.guilded.channelId}.json`);
-	json.push({
+	const json = require(`../../../data/docs/${doc.channelId}.json`);
+	json.docs.push({
 		id: doc.id,
 		threadId: thread.id,
 	});
-	fs.writeFileSync(`./data/${srv.guilded.serverId}/docs/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	fs.writeFileSync(`./data/docs/${docbridge.guilded.channelId}.json`, JSON.stringify(json));
 };

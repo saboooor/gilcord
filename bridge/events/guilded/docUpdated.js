@@ -7,16 +7,16 @@ module.exports = async (discord, guilded, doc) => {
 	if (!srv || !srv.docs) return;
 
 	// Get the channel config and check if it exists
-	const bridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
-	if (!bridge) return;
+	const docbridge = srv.docs.find(b => b.guilded.channelId == doc.channelId);
+	if (!docbridge) return;
 
 	// Get the cached document
-	const json = require(`../../../data/${srv.guilded.serverId}/docs/${bridge.guilded.channelId}.json`);
-	const cacheddoc = json.find(i => i.id == doc.id);
+	const json = require(`../../../data/docs/${doc.channelId}.json`);
+	const cacheddoc = json.docs.find(i => i.id == doc.id);
 	if (!cacheddoc) return;
 
 	// Get channel and message
-	const thread = await discord.channels.fetch(cacheddoc.threadId);
+	const thread = discord.channels.cache.get(cacheddoc.threadId);
 
 	// Split the doc content every 2000 characters
 	const docContent = doc.content.match(/.{1,2000}/g);

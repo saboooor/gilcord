@@ -1,0 +1,84 @@
+# The configuration for the message caching system.
+# setting enabled to false will disable the message reply/edit/delete support
+# setting timeout and max_messages to 0 will keep the messages forever until the message is deleted unless message cache is disabled
+# both settings are interchangeable
+message_cache:
+  enabled: true
+  timeout: 3600 # Cached message expiry in seconds
+  max_messages: 100 # Maximum amount of messages to cache
+
+# This will log all messages in the console, this is really messy
+debug: false
+
+guilded: # This is the guilded side of the config
+  token: "" # This is the guilded bot's token
+  nameformat: "**{name}** ► " # this is the global prefix on the guilded messages ( use {name} for the name )
+
+discord: # This is the discord side of the config
+  token: "" # This is the discord bot's token
+  nameformat: "Guilded • {name}" # this is the global author name on the discord messages ( use {name} for the name )
+  presence:
+    status: 'dnd'
+    activity:
+      name: 'Guilded-Discord Bridge'
+      type: 'Watching'
+
+servers: # This is where you define the bridge servers
+  - guilded: # This is the guilded side of the server
+      serverId: "" # This is the guilded server's id
+    # nameformat: "" # This is optional (overrides the default)
+    discord: # This is the discord side of the server
+      serverId: "" # This is the discord server's id
+    # nameformat: ""
+    channels: # This is the text channels to bridge
+      - guilded: # This is the guilded side of the channel
+          channelId: "" # This is the guilded channel's id, this must be a text based channel
+        # nameformat: ""
+        discord: # This is the discord side of the channel
+          channelId: "" # This is the discord channel's id, this must be a text based channel
+      # exempt_bots: true # This will exempt bots from the bridge
+    # You may add more channels with this format
+    # - guilded:
+    #     channelId: ""
+    #   # nameformat: ""
+    #   discord:
+    #     channelId: ""
+    #   # nameformat: ""
+    # # exempt_bots: true
+    lists: # This is the list channels to bridge
+      - guilded: # This is the guilded side of the channel
+          channelId: "" # This is the guilded channel's id, this must be a list channel
+        discord: # This is the discord side of the channel
+          channelId: "" # This is the discord channel's id, this must be a text based channel
+          permission: "ManageMessages" # This is the permission required to be able to manage list items
+          # You may find a list of permissions here: https://github.com/discordjs/discord-api-types/blob/main/payloads/common.ts#L10
+    # You may add more channels with this format
+    # - guilded:
+    #     channelId: ""
+    #   discord:
+    #     channelId: ""
+    #     permission: ""
+    docs: # This is the doc channels to bridge
+      - guilded: # This is the guilded side of the channel
+          channelId: "" # This is the guilded channel's id, this must be a docs channel
+        discord: # This is the discord side of the channel
+          channelId: "" # This is the discord channel's id, this must be a forum channel
+    # You may add more channels with this format
+    # - guilded:
+    #     channelId: ""
+    #   discord:
+    #     channelId: ""
+# You may add more servers with this format
+# - guilded:
+#     serverId: ""
+#   # nameformat: ""
+#   discord:
+#     serverId: ""
+#   # nameformat: ""
+#   channels:
+#     - guilded:
+#         channelId: ""
+#       # nameformat: ""
+#       discord:
+#         channelId: ""
+#       # nameformat: ""
