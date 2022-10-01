@@ -7,15 +7,14 @@ module.exports = async (discord, guilded, item) => {
 
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == item.serverId);
-	if (!srv || !srv.lists) return;
+	if (!srv || !srv.list) return;
 
 	// Get the channel config and check if it exists
-	const listbridge = srv.lists.find(b => b.guilded.channelId == item.channelId);
-	if (!listbridge) return;
+	const bridge = srv.list.find(b => b.guilded.channelId == item.channelId);
+	if (!bridge) return;
 
 	// Get the item author and check if it exists
-	item.member = guilded.members.cache.get(`${item.serverId}:${item.createdBy}`);
-	if (!item.member) item.member = await guilded.members.fetch(item.serverId, item.createdBy).catch(err => guilded.logger.error(err));
+	item.member = await discord.channels.fetch(`${item.serverId}:${item.createdBy}`).catch(() => { return null; });
 	if (!item.member) return;
 
 	// Create Embed with item info
@@ -39,15 +38,15 @@ module.exports = async (discord, guilded, item) => {
 		]);
 
 	// Send message
-	const channel = discord.channels.cache.get(listbridge.discord.channelId);
+	const channel = await discord.channels.fetch(bridge.discord.channelId);
 	if (config.debug) discord.logger.info(`List item created from Guilded: ${JSON.stringify({ embeds: [ItemEmbed], components: [row] })}`);
 	const msg = await channel.send({ embeds: [ItemEmbed], components: [row] });
 
 	// Push the item in the json file
-	const json = require(`../../../data/lists/${item.channelId}.json`);
-	json.items.push({
+	const json = require(`../../../data/${srv.guilded.serverId}/list/${bridge.guilded.channelId}.json`);
+	json.push({
 		id: item.id,
 		messageId: msg.id,
 	});
-	fs.writeFileSync(`./data/lists/${listbridge.guilded.channelId}.json`, JSON.stringify(json));
+	fs.writeFileSync(`./data/${srv.guilded.serverId}/list/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 };

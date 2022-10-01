@@ -15,7 +15,7 @@ module.exports = {
 	},
 	async autoComplete(discord, guilded, interaction, srv) {
 		// Get the channel config and check if it exists
-		const bridge = srv.channels.find(b => b.discord.channelId == interaction.channel.id);
+		const bridge = srv.text.find(b => b.discord.channelId == interaction.channel.id);
 		if (!bridge) return interaction.respond([{ name: 'This channel isn\'t bridged to the Guilded server!', value: '0' }]);
 
 		// Get the focused option
@@ -43,7 +43,7 @@ module.exports = {
 	async execute(discord, guilded, interaction, srv) {
 		try {
 			// Get the channel config and check if it exists
-			const bridge = srv.channels.find(b => b.discord.channelId == interaction.channel.id);
+			const bridge = srv.text.find(b => b.discord.channelId == interaction.channel.id);
 			if (!bridge) return interaction.reply({ content: 'This channel isn\'t bridged to the Guilded server!', ephemeral: true });
 
 			// Get the id and create mention embed

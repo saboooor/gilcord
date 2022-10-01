@@ -19,21 +19,21 @@ module.exports = async (discord, guilded, interaction) => {
 
 	// Set the target
 	let target;
-	if (split[0] == 'list' && srv.lists) {
+	if (split[0] == 'list' && srv.list) {
 		// Get the channel config and check if it exists
-		const listbridge = srv.lists.find(b => b.discord.channelId == interaction.channel.id);
-		if (!listbridge) return;
+		const bridge = srv.list.find(b => b.discord.channelId == interaction.channel.id);
+		if (!bridge) return;
 
 		// Fetch the list item
-		target = await guilded.lists.fetch(listbridge.guilded.channelId, targetId);
+		target = await guilded.lists.fetch(bridge.guilded.channelId, targetId);
 	}
 	else if (split[0] == 'doc' && srv.docs) {
 		// Get the channel config and check if it exists
-		const docbridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
-		if (!docbridge) return;
+		const bridge = srv.docs.find(b => b.discord.channelId == interaction.channel.id);
+		if (!bridge) return;
 
 		// Fetch the dicument
-		target = await guilded.docs.fetch(docbridge.guilded.channelId, targetId);
+		target = await guilded.docs.fetch(bridge.guilded.channelId, targetId);
 	}
 	if (!target) return;
 
