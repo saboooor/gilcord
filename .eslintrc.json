@@ -46,7 +46,6 @@
 	},
 	"globals": {
 		"sleep": "readonly",
-		"logDate": "readonly",
 		"config": "readonly"
 	}
 }

@@ -40,14 +40,14 @@ module.exports = async (discord, guilded, discserver, srv) => {
 		}
 
 		// Get the Guilded channel and check if it exists
-		const guilchannel = await guilded.channels.fetch(bridge.guilded.channelId).catch(() => { return undefined; });
+		const guilchannel = await guilded.channels.fetch(bridge.guilded.channelId).catch(() => { return null; });
 		if (!guilchannel) {
 			discord.logger.error(`${discserver.name}'s Guilded channelId ${bridge.guilded.channelId} doesn't exist!`);
 			continue;
 		}
 
 		// Get the Discord channel and check if it exists
-		const discchannel = await discserver.channels.fetch(bridge.discord.channelId).catch(() => { return undefined; });
+		const discchannel = await discserver.channels.fetch(bridge.discord.channelId).catch(() => { return null; });
 		if (!discchannel) {
 			discord.logger.error(`${discserver.name}'s Discord channelId ${bridge.discord.channelId} doesn't exist!`);
 			continue;

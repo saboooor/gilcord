@@ -3,10 +3,6 @@ const rn = new Date();
 const logDate = `${minTwoDigits(rn.getMonth() + 1)}-${minTwoDigits(rn.getDate())}-${rn.getFullYear()}`;
 function minTwoDigits(n) { return (n < 10 ? '0' : '') + n; }
 module.exports = client => {
-	// Set the global vars
-	global.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-	global.logDate = logDate;
-
 	// Create a logger
 	client.logger = createLogger({
 		format: format.combine(
