@@ -1,0 +1,90 @@
+# The configuration for the message caching system.
+# setting timeout and max_messages to 0 will keep the messages forever until the message is deleted unless message cache is disabled
+# both timeout and max_messages are interchangeable
+message_cache:
+  # setting enabled to false will disable the message cache therefore will disable message reply/edit/delete support
+  enabled: true
+  # Cached message expiry in minutes
+  timeout: 5
+  # Maximum amount of messages to cache
+  max_messages: 100
+
+# This is the Guilded side of the bot config
+guilded:
+  # This is the Guilded bot's token
+  token: ""
+  # This is the global prefix on the Guilded messages
+  # Use the {name} placeholder to put the user's name
+  nameformat: "**{name}** ► " 
+
+# This is the Discord side of the bot config
+discord:
+  # This is the Discord bot's token
+  token: ""
+  # This is the global author name on the Guilded messages
+  # Use the {name} placeholder to put the user's name
+  nameformat: "Guilded • {name}"
+  # You may set a bot presence here
+  #presence:
+  #  # Possible statuses are: 'online', 'idle', 'dnd', and 'invisible'
+  #  status: 'dnd'
+  #  activity:
+  #    name: 'Guilded-Discord Bridge'
+  #    # Possible activity types are: 'Playing', 'Watching', 'Listening', 'Competing'
+  #    type: 'Watching'
+
+# This is where you define the list of servers that have bridges
+servers:
+    # This is the Guilded side of the server
+  - guilded:
+      serverId: ""
+      # This is optional (overrides the default)
+      #nameformat: "**{name}** ► "
+    # This is the Discord side of the server
+    discord:
+      serverId: ""
+      # This is optional (overrides the default)
+      #nameformat: "**{name}** ► "
+    # This is the list of text channels to bridge
+    text: 
+        # This is the Guilded side of the bridge
+      - guilded:
+          channelId: ""
+          # This is optional (overrides the default)
+          #nameformat: "**{name}** ► "
+        # This is the Discord side of the bridge
+        discord:
+          channelId: ""
+          # This is optional (overrides the default)
+          #nameformat: "**{name}** ► "
+        # This will exempt bots from going through the bridge
+        exempt_bots: false
+      # You may add more text channels copying and pasting the above format INCLUDING the dash before the Guilded property, that's what separates them
+    # This is the list of list channels to bridge
+    list:
+        # This is the Guilded side of the bridge
+      - guilded:
+          channelId: ""
+        # This is the Discord side of the bridge
+        discord:
+          channelId: ""
+          # This is the permission required to be able to manage list items
+          # You may find a list of permissions here: https://github.com/Discordjs/Discord-api-types/blob/main/payloads/common.ts#L10
+          permission: "ManageMessages" 
+      # You may add more channels copying and pasting the above format INCLUDING the dash before the Guilded property, that's what separates them
+    # This is the list of docs channels to bridge
+    docs:
+        # This is the Guilded side of the bridge
+      - guilded:
+          channelId: ""
+        # This is the Discord side of the bridge
+        discord:
+          channelId: ""
+      # You may add more channels copying and pasting the above format INCLUDING the dash before the Guilded property, that's what separates them
+  # You may add more servers by copying and pasting the above format INCLUDING the dash before the Guilded property, that's what separates them
+
+# This will log all messages in the console, this is still currently really messy
+debug: false
+
+# pls no touchy touchy
+version: 1

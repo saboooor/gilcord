@@ -4,11 +4,11 @@ module.exports = async (discord, guilded, newmsg) => {
 	if (!srv) return;
 
 	// Get the channel config and check if it and the cached message exists
-	const bridge = srv.channels.find(b => b.guilded.channelId == newmsg.channelId);
+	const bridge = srv.text.find(b => b.guilded.channelId == newmsg.channelId);
 	if (!bridge) return;
 
 	// Get the cached message and check if it exist
-	const json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
+	const json = require(`../../../data/${srv.guilded.serverId}/text/${bridge.guilded.channelId}.json`);
 	const cachedMessage = json.find(m => m.guilded == newmsg.id);
 	if (!cachedMessage || !cachedMessage.fromGuilded) return;
 
@@ -17,14 +17,14 @@ module.exports = async (discord, guilded, newmsg) => {
 	if (newmsg.replyMessageIds[0]) {
 		for (const replyId of newmsg.replyMessageIds) {
 			if (json.find(m => m.guilded == replyId)) {
-				const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(json.find(m => m.guilded == replyId).discord);
+				const discchannel = await discord.channels.fetch(bridge.discord.channelId);
+				const replyMsg = await discchannel.messages.fetch(json.find(m => m.guilded == replyId).discord);
 				if (replyMsg) replies.push(`${replyMsg.author} \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 			}
 			else {
-				const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(err => guilded.logger.error(err));
+				const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(() => { return null; });
 				if (!replyMsg) return;
-				replyMsg.member = guilded.members.cache.get(`${replyMsg.serverId}:${replyMsg.createdById}`);
-				if (!replyMsg.member) replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(err => guilded.logger.error(err));
+				replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(() => { return null; });
 				if (!replyMsg.member) replyMsg.member = { user: { name: replyMsg.createdById } };
 				replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 			}

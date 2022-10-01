@@ -3,19 +3,19 @@ const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = async (discord, guilded, item) => {
 	// Get the server config and check if it exists
 	const srv = config.servers.find(s => s.guilded.serverId == item.serverId);
-	if (!srv || !srv.lists) return;
+	if (!srv || !srv.list) return;
 
 	// Get the channel config and check if it exists
-	const listbridge = srv.lists.find(b => b.guilded.channelId == item.channelId);
-	if (!listbridge) return;
+	const bridge = srv.list.find(b => b.guilded.channelId == item.channelId);
+	if (!bridge) return;
 
 	// Get the cached list item
-	const json = require(`../../../data/lists/${item.channelId}.json`);
-	const cacheditem = json.items.find(i => i.id == item.id);
+	const json = require(`../../../data/${srv.guilded.serverId}/list/${bridge.guilded.channelId}.json`);
+	const cacheditem = json.find(i => i.id == item.id);
 	if (!cacheditem) return;
 
 	// Get channel and message
-	const channel = discord.channels.cache.get(listbridge.discord.channelId);
+	const channel = await discord.channels.fetch(bridge.discord.channelId);
 	const message = await channel.messages.fetch(cacheditem.messageId);
 
 	// Create row with button to uncomplete

@@ -11,19 +11,18 @@ module.exports = async (discord, guilded, message) => {
 	if (message.createdById == guilded.user.id || (!message.content && !message.raw.embeds)) return;
 
 	// Get the channel config and check if it exists
-	const bridge = srv.channels.find(b => b.guilded.channelId == message.channelId);
+	const bridge = srv.text.find(b => b.guilded.channelId == message.channelId);
 	if (!bridge) return;
 
 	// Get the message author and check if it exists
-	message.member = guilded.members.cache.get(`${message.serverId}:${message.createdById}`);
-	if (!message.member) message.member = await guilded.members.fetch(message.serverId, message.createdById).catch(err => guilded.logger.error(err));
+	message.member = await guilded.members.fetch(message.serverId, message.createdById).catch(() => { return null; });
 	if (!message.member) return;
 
 	// Check if the author is a bot and if the bot is allowed to send messages
 	if (message.member.user.type == UserType.Bot && bridge.exempt_bots) return;
 
 	// Get cached messages
-	let json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
+	const json = require(`../../../data/${srv.guilded.serverId}/text/${bridge.guilded.channelId}.json`);
 
 	// Parse all mentions on message content
 	message.content = await parseGuilded(message.content);
@@ -33,16 +32,16 @@ module.exports = async (discord, guilded, message) => {
 	if (message.replyMessageIds[0]) {
 		for (const replyId of message.replyMessageIds) {
 			if (json.find(m => m.guilded == replyId)) {
-				const replyMsg = await discord.channels.cache.get(bridge.discord.channelId).messages.fetch(json.find(m => m.guilded == replyId).discord);
+				const discchannel = await discord.channels.fetch(bridge.discord.channelId);
+				const replyMsg = await discchannel.messages.fetch(json.find(m => m.guilded == replyId).discord);
 				if (replyMsg && replyMsg.author.id != bridge.discord.webhook.id) {
 					replies.push(`${replyMsg.author} \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 					continue;
 				}
 			}
-			const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(err => guilded.logger.error(err));
+			const replyMsg = await guilded.messages.fetch(bridge.guilded.channelId, replyId).catch(() => { return null; });
 			if (!replyMsg) return;
-			replyMsg.member = guilded.members.cache.get(`${replyMsg.serverId}:${replyMsg.createdById}`);
-			if (!replyMsg.member) replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(err => guilded.logger.error(err));
+			replyMsg.member = await guilded.members.fetch(replyMsg.serverId, replyMsg.createdById).catch(() => { return null; });
 			if (!replyMsg.member) replyMsg.member = { user: { name: replyMsg.createdById } };
 			replies.push(`**${replyMsg.member.user.name}** \`${replyMsg.content.replace(/\n/g, ' ').replace(/`/g, '\'')}\``);
 		}
@@ -68,24 +67,16 @@ module.exports = async (discord, guilded, message) => {
 		guilded: message.id,
 		discord: discordmsg.id,
 		fromGuilded: true,
+		created: Date.now(),
 	};
 	json.push(obj);
 	if (config.debug) discord.logger.info(`Cached message from Guilded: ${JSON.stringify(obj)}`);
-	fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+	fs.writeFileSync(`./data/${srv.guilded.serverId}/text/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 
 	// Delete old cached message if max messages is reached
 	if (config.message_cache.max_messages && json.length > config.message_cache.max_messages) {
 		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(json[0])}`);
 		json.shift();
-		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
-	}
-
-	// Delete cached message after the amount of time specified in the config
-	if (config.message_cache.timeout) {
-		await sleep(config.message_cache.timeout * 1000);
-		if (config.debug) discord.logger.info(`Deleted old cached message from Guilded: ${JSON.stringify(obj)}`);
-		json = require(`../../../data/messages/${bridge.guilded.channelId}.json`);
-		json.splice(json.indexOf(obj), 1);
-		fs.writeFileSync(`./data/messages/${bridge.guilded.channelId}.json`, JSON.stringify(json));
+		fs.writeFileSync(`./data/${srv.guilded.serverId}/text/${bridge.guilded.channelId}.json`, JSON.stringify(json));
 	}
 };
