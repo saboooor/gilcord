@@ -29,7 +29,7 @@ discord:
   #  # Possible statuses are: 'online', 'idle', 'dnd', and 'invisible'
   #  status: 'dnd'
   #  activity:
-  #    name: 'Guilded-Discord Bridge'
+  #    name: 'Gilcord Bridge'
   #    # Possible activity types are: 'Playing', 'Watching', 'Listening', 'Competing'
   #    type: 'Watching'
 

@@ -1,11 +1,11 @@
 ![logo](https://user-images.githubusercontent.com/42164502/168778146-3c8efa1c-c3f1-4576-b4b1-d51edd9abe1c.png)
 
-# A guilded-discord chat bridge
+# Gilcord Chat Bridge
 [![Discord](https://discord.com/api/guilds/811354612547190794/widget.png)](https://discord.gg/Bsefgbaedz)
 [![Guilded](https://guilded.nico.engineer/shields/vanity/cactie?style=flat)](https://guilded.gg/cactie)
-[![CodeFactor](https://www.codefactor.io/repository/github/saboooor/guilded-discord-bridge/badge)](https://www.codefactor.io/repository/github/saboooor/guilded-discord-bridge)
+[![CodeFactor](https://www.codefactor.io/repository/github/saboooor/Gilcord/badge)](https://www.codefactor.io/repository/github/saboooor/Gilcord)
 
-Bridges chat channels between discord and guilded servers
+Bridges chat channels between Discord and Guilded servers
 
 # Supported Channel types: (Guilded <> Discord)
 - Text-based (Text-based <> Text-based)
@@ -50,4 +50,4 @@ https://user-images.githubusercontent.com/42164502/169674804-68ec5fd7-5070-4692-
 https://user-images.githubusercontent.com/42164502/169674700-74afd54e-edee-4d54-8779-51e35fe2b023.mp4
 
 # Contributors
-![Contributors](https://contrib.rocks/image?repo=saboooor/guilded-discord-bridge)
+![Contributors](https://contrib.rocks/image?repo=saboooor/Gilcord)

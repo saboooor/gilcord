@@ -1,10 +1,10 @@
 {
-  "name": "discord-guilded-bridge",
+  "name": "gilcord",
   "version": "7.0.0",
-  "description": "a simple discord-guilded bridge",
+  "description": "a simple guilded-discord bridge",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saboooor/guilded-discord-bridge.git"
+    "url": "git+https://github.com/saboooor/Gilcord.git"
   },
   "scripts": {
     "start": "node index.js"
@@ -25,8 +25,8 @@
     "yaml": "^2.1.1"
   },
   "bugs": {
-    "url": "https://github.com/saboooor/guilded-discord-bridge/issues"
+    "url": "https://github.com/saboooor/Gilcord/issues"
   },
-  "homepage": "https://github.com/saboooor/guilded-discord-bridge#readme",
+  "homepage": "https://github.com/saboooor/Gilcord#readme",
   "keywords": []
 }

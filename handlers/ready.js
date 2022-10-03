@@ -8,10 +8,10 @@ module.exports = (client) => {
 
 		// Set the activity on the discord client
 		if (config.discord.presence) {
-			if (config.discord.presence.activity) await client.user.setPresence({ activities: [{ name: config.discord.presence.activity.name ?? 'https://github.com/saboooor/guilded-discord-bridge', type: ActivityType[config.discord.presence.activity.type ?? 'Watching'] }] });
+			if (config.discord.presence.activity) await client.user.setPresence({ activities: [{ name: config.discord.presence.activity.name ?? 'https://github.com/saboooor/Gilcord', type: ActivityType[config.discord.presence.activity.type ?? 'Watching'] }] });
 			await client.user.setStatus(config.discord.presence.status ?? 'dnd');
 		}
-		else { client.user.setPresence({ activities: [{ name: 'https://github.com/saboooor/guilded-discord-bridge' }] }); }
+		else { client.user.setPresence({ activities: [{ name: 'https://github.com/saboooor/Gilcord' }] }); }
 
 		// Set slash commands
 		config.servers.forEach(async server => {
