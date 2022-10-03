@@ -1,4 +1,4 @@
-![logo](https://user-images.githubusercontent.com/42164502/168778146-3c8efa1c-c3f1-4576-b4b1-d51edd9abe1c.png)
+![logo](https://raw.githubusercontent.com/saboooor/gilcord/dev/pfp.png)
 
 # Gilcord Chat Bridge
 [![Discord](https://discord.com/api/guilds/811354612547190794/widget.png)](https://discord.gg/Bsefgbaedz)
