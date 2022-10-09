@@ -41,7 +41,7 @@ module.exports = async (discord, guilded, discserver, srv) => {
 			if (json.find(cachedDoc => cachedDoc.id == doc.id)) continue;
 
 			// Split the doc content every 2000 characters
-			const docContent = doc.content.match(/.{1,2000}/g);
+			const docContent = doc.content.match(/((.|\n)*){1,2000}/g);
 
 			// Create the thread with the doc
 			const thread = await discchannel.threads.create({

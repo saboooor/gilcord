@@ -16,7 +16,7 @@ module.exports = async (discord, guilded, doc) => {
 	const channel = await discord.channels.fetch(bridge.discord.channelId);
 
 	// Split the doc content every 2000 characters
-	const docContent = doc.content.match(/.{1,2000}/g);
+	const docContent = doc.content.match(/((.|\n)*){1,2000}/g);
 
 	// Make the thread data with the first chunk if original content is over 2000 characters
 	const threadData = {
