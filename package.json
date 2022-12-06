@@ -19,7 +19,7 @@
     "discord.js": "^14.5.0",
     "eslint": "^8.24.0",
     "fs": "^0.0.1-security",
-    "guilded.js": "^0.13.16",
+    "guilded.js": "^0.15.0",
     "node-cron": "^3.0.2",
     "winston": "^3.8.2",
     "yaml": "^2.1.1"
