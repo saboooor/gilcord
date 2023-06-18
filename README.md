@@ -1,3 +1,5 @@
+## This repository has been archived in favour of [Cactie](https://cactie.luminescent.dev)'s Guilded bridge feature
+
 ![logo](https://raw.githubusercontent.com/saboooor/gilcord/dev/pfp.png)
 
 # Gilcord Chat Bridge
